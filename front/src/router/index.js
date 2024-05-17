@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import MovieDetailView from '@/views/MovieDetailView.vue'
 import MovieListView from '@/views/MovieListView.vue'
+import SignUpView from '@/views/SignUpView.vue'
+import LogInView from '@/views/LogInView.vue'
 
 import RelatedMovie from '@/components/RelatedMovie.vue'
 import ReviewList from '@/components/ReviewList.vue'
@@ -28,6 +30,16 @@ const router = createRouter({
         {path:'related', name:'related', component:RelatedMovie},
         {path:'review', name:'review', component:ReviewList},
       ]
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LogInView
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignUpView
     },
 
   ]
