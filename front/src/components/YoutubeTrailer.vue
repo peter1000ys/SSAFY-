@@ -1,6 +1,8 @@
 
 <template>
-
+  <div>
+    <h1>YoutubeTrailer</h1>
+  </div>
 </template>
 
 <script setup>
