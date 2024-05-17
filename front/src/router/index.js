@@ -6,6 +6,7 @@ import MovieListView from '@/views/MovieListView.vue'
 import RelatedMovie from '@/components/RelatedMovie.vue'
 import ReviewList from '@/components/ReviewList.vue'
 
+// 라우터 네임 확인하고 사용하기!!
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
