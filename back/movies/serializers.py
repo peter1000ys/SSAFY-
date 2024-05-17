@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Movie, Genre
 from accounts.models import User
 
-class GenreSerializer(serializers.ModelSerializer):
+class GenreListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = '__all__'

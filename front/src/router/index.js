@@ -7,6 +7,7 @@ import LogInView from '@/views/LogInView.vue'
 
 import RelatedMovie from '@/components/RelatedMovie.vue'
 import ReviewList from '@/components/ReviewList.vue'
+import Genre from '@/components/Genre.vue'
 
 // 라우터 네임 확인하고 사용하기!!
 const router = createRouter({
@@ -20,7 +21,13 @@ const router = createRouter({
     {
       path: '/movies',
       name: 'list',
-      component: MovieListView
+      component: MovieListView,
+      children: [
+        {
+          path:'/genre/:genreId',
+          name:'genre',
+          component: Genre,
+        },]
     },
     {
       path: '/:movieId',

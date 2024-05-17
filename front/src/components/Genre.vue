@@ -8,6 +8,10 @@
 
 <script setup>
   import GenreMovieCard from '@/components/GenreMovieCard.vue';
+  
+  defineProps({
+    genre:Object
+  })
 </script>
 
 <style scoped>
