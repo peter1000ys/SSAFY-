@@ -1,19 +1,19 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import MovieListSerializer, MovieSerializer
-from .models import Movie
-
+from .serializers import MovieListSerializer, MovieSerializer, GenreListSerializer
+from .models import Movie,Genre
+from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from .utils import fetch_and_save_movies, fetch_and_save_genres
 
 # Create your views here.
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def movie_list(request):
     if request.method == 'GET':
-        movies = Movie.objects.all()
+        movies = get_list_or_404(Movie.objects.order_by('-popularity')[:30])
         serializers = MovieListSerializer(movies, many=True)
         return Response(serializers.data)
     elif request.method == 'POST':
@@ -27,10 +27,24 @@ def movie_list(request):
 @permission_classes([IsAuthenticated])
 def movie_detail(request, movie_pk):
     if request.method == 'GET':
-        movie = Movie.objects.get(pk=movie_pk)
+        movie = get_object_or_404(Movie, pk=movie_pk)
         serializers = MovieListSerializer(movie)
         return Response(serializers.data)
-    
+
+@api_view(['GET'])
+def genre_list(request):
+    if request.method == 'GET':
+        genres = get_list_or_404(Genre)
+        serializers = GenreListSerializer(genres, many=True)
+        return Response(serializers.data)
+
+@api_view(['GET'])
+def filter_genre(request, genre_pk):
+    if request.method == 'GET':
+        movies = get_list_or_404(Movie.objects.order_by('-popularity'), genres = genre_pk)
+        serializers = MovieListSerializer(movies, many=True)
+        return Response(serializers.data)
+
 # TMDB에서 장르 가져오기 위한 view함수
 class FetchGenresAPIView(APIView):
     def get(self, request, *args, **kwargs):
