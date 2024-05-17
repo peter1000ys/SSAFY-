@@ -27,3 +27,4 @@ def movie_detail(request, movie_pk):
         movie = Movie.objects.get(pk=movie_pk)
         serializers = MovieListSerializer(movie)
         return Response(serializers.data)
+    
