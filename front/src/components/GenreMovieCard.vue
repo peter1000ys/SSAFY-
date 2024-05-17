@@ -3,14 +3,16 @@
   <div>
     <div id="box">
     <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
-    <h1 class="heading">{{ movie.title }}</h1>
-    <div class="data">
-      <span class="date">{{movie.release_date}}</span>
-      <!-- <span class="user-id">{{ movie.overview }}</span> -->
+    <div class="overlay">
+      <h1 class="heading">{{ movie.title }}</h1>
+      <div class="data">
+        <!-- <span class="date">{{movie.release_date}}</span> -->
+        <!-- <span class="user-id">{{ movie.overview }}</span> -->
+      </div>
+      <!-- <p class="texts">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      </p> -->
     </div>
-    <p class="texts">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-    </p>
   </div>
   </div>
 </template>
@@ -43,13 +45,14 @@
 
 #box .img {
   display: block;
-  width: 100%;
-  height: 60%;
+  width: inherit;
+  height: inherit;;
   padding: 0;
 
 }
 #box .heading {
   font-size: 28px;
+  color: white;
 }
 
 #box .data {
@@ -77,4 +80,30 @@
   font-size: 14px;
   line-height: 18px;
 }
+
+.overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: inherit;
+            height: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            background: rgb(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+	}
+
+#box:hover .overlay {
+            opacity: 1;
+            pointer-events: auto;
+            
+ 	}
 </style>
+
+
+
+
+

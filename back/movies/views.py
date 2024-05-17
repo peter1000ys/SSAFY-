@@ -13,7 +13,7 @@ from .utils import fetch_and_save_movies, fetch_and_save_genres
 # @permission_classes([IsAuthenticated])
 def movie_list(request):
     if request.method == 'GET':
-        movies = get_list_or_404(Movie)
+        movies = get_list_or_404(Movie.objects.order_by('-popularity')[:30])
         serializers = MovieListSerializer(movies, many=True)
         return Response(serializers.data)
     elif request.method == 'POST':
@@ -38,6 +38,12 @@ def genre_list(request):
         serializers = GenreListSerializer(genres, many=True)
         return Response(serializers.data)
 
+@api_view(['GET'])
+def filter_genre(request, genre_pk):
+    if request.method == 'GET':
+        movies = get_list_or_404(Movie.objects.order_by('-popularity'), genres = genre_pk)
+        serializers = MovieListSerializer(movies, many=True)
+        return Response(serializers.data)
 
 # TMDB에서 장르 가져오기 위한 view함수
 class FetchGenresAPIView(APIView):

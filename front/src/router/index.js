@@ -19,15 +19,15 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/movies',
+      path: '/movies/',
       name: 'list',
       component: MovieListView,
       children: [
         {
-          path:'/genre/:genreId',
+          path:'/:genreId/',
           name:'genre',
           component: Genre,
-        },]
+        }]
     },
     {
       path: '/:movieId',

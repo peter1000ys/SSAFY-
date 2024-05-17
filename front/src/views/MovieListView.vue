@@ -3,7 +3,7 @@
     <h1>MovieListView</h1>
     <div v-for="genre in store.genres">
       <div>
-        <RouterLink :to="{name: 'genre', params: { genreId: genre.tmdb_id }}" :key="genre.tmdb_id" :genre="genre">{{ genre.name }}</RouterLink>
+        <RouterLink :to="{name: 'genre', params: { genreId: genre.tmdb_id }}">{{ genre.name }}</RouterLink>
       </div>
 
     </div>
