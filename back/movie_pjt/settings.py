@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'movies',
     'community',
     'rest_framework',
+    'django_extensions',
     'rest_framework.authtoken',
     'dj_rest_auth',
     'corsheaders',
