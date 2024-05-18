@@ -2,11 +2,14 @@ import axios from "axios";
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 
-export const useUserStore = defineStore(
-  "user",
-  () => {
-    const token = ref(null);
-    const userPk = ref(null);
+export const useUserStore = defineStore("user", () => {
+    const token = ref(null)
+    // 로그인 된 유저의 유저네임 변수
+    const loginUsername = ref(null)
+    // 로그인 된 유저 id 변수
+    const userId = ref(null)
+
+    // 로그인(토큰) 여부 확인 변수
     const isLogin = computed(() => {
       if (token.value === null) {
         return false;
@@ -14,6 +17,7 @@ export const useUserStore = defineStore(
         return true;
       }
     });
+
     // 회원가입
     const signup = function (data) {
       axios({
@@ -26,18 +30,34 @@ export const useUserStore = defineStore(
     };
 
     // 로그인
-    const login = function (data) {
+    const login = function (data, username) {
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/accounts/login/",
         data,
+
+      // 로그인 및 로그인한 유저 네임 저장
       }).then((response) => {
-        console.log(response.data);
-        token.value = response.data.token;
-        userPk.value = response.data.user_pk;
-        console.log(token.value, userPk.value);
-      });
-    };
+        loginUsername.value = username.value
+        token.value = response.data.key
+        console.log(token.value)
+        console.log(token)
+        console.log(loginUsername.value)
+        
+        // 저장된 유저네임으로 유저 id 저장
+        axios({
+          method: "get",
+          url: `http://127.0.0.1:8000/api/v1_2/${loginUsername.value}/`,
+          headers: {
+            Authorization: `Token ${token.value}`
+          }
+          })
+          .then((response) => {
+            userId.value = response.data.id
+            console.log(userId.value)
+          })
+      })
+    }
 
     // 로그아웃
     const logout = function () {
@@ -53,7 +73,7 @@ export const useUserStore = defineStore(
       });
     };
 
-    return { token, userPk, signup, login, logout, isLogin };
+    return { token, signup, login, logout, isLogin, loginUsername, userId };
   },
   { persist: true }
 );

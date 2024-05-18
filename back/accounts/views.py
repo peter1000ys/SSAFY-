@@ -1,15 +1,27 @@
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
+from django.shortcuts import render
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .serializers import UserSerializer
+from .models import User
+from django.shortcuts import get_object_or_404, get_list_or_404
+from rest_framework.views import APIView
+from rest_framework import status
 
-class CustomAuthToken(ObtainAuthToken):
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_pk': user.pk  
-        })
+# 전체 유저 정보 조회
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def user(request):
+  if request.method == 'GET':
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+# 로그인된 유저 정보 조회
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def user_detail(request, username):
+  if request.method == 'GET':
+    review = User.objects.get(username=username)
+    serializer = UserSerializer(review)
+    return Response(serializer.data)

@@ -20,6 +20,8 @@ from accounts.views import CustomAuthToken
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('movies.urls')),
+    path('api/v1_1/', include('community.urls')),
+    path('api/v1_2/', include('accounts.urls')),
     path('accounts/', include('dj_rest_auth.urls')),
     path('accounts/signup/', include('dj_rest_auth.registration.urls')),
     path('accounts/login/', CustomAuthToken.as_view(), name='api_token_auth')
