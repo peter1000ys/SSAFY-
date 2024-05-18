@@ -10,7 +10,7 @@ from rest_framework import status
 
 from django.http import HttpResponse
 
-# Create your views here.
+# 리뷰 조회, 리뷰 작성 기능
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def review_list(request):
@@ -25,6 +25,7 @@ def review_list(request):
       serializer.save()
       return Response(serializer.data)
 
+# 리뷰 상세 정보 조회 기능
 @api_view(['GET',])
 @permission_classes([IsAuthenticated])
 def review_detail(request, review_pk):
@@ -41,6 +42,7 @@ def review_like(request):
 def review_hate(request):
   pass
 
+# 리뷰 < - 댓글 조회, 작성 기능
 @api_view(['GET', 'POST'])
 def review_comment(request):
   pass

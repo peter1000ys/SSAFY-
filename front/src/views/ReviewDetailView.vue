@@ -24,6 +24,7 @@
   const reviewId = ref(route.params.reviewId)
   const review = ref({})
 
+  // 리뷰 상세 정보 요청
   onMounted(() => {
     axios({
       method: "get",
@@ -36,10 +37,6 @@
       review.value = response.data
     });
   })
-  
-
-
-
 </script>
 
 <style scoped>

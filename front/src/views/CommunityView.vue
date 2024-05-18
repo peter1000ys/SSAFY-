@@ -17,13 +17,8 @@
   const store = useCommunityStore()
   onMounted(() => {
     store.getReviews()
-  })
-  
+  })  
   const reviews = store.reviews
-
-
-
-
 
 </script>
 

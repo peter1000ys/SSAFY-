@@ -7,18 +7,19 @@ from .models import User
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.views import APIView
 from rest_framework import status
-# Create your views here.
 
-@api_view(['GET', 'POST'])
+# 전체 유저 정보 조회
+@api_view(['GET',])
 @permission_classes([IsAuthenticated])
 def user(request):
   if request.method == 'GET':
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
-  
 
+# 로그인된 유저 정보 조회
 @api_view(['GET',])
+@permission_classes([IsAuthenticated])
 def user_detail(request, username):
   if request.method == 'GET':
     review = User.objects.get(username=username)

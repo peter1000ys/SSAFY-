@@ -3,7 +3,6 @@
   <div>
     <h1>ReviewCreate</h1>
     <form @submit.prevent="createReview">
-
       <div>
         <label for="title">title : </label>
         <input type="text" id="title" name="title" v-model="title">
@@ -33,13 +32,13 @@
   import { ref } from 'vue'
   import { useCommunityStore } from '@/stores/community'
   import { useUserStore } from '@/stores/user'
-  import { useRouter } from 'vue-router'
-  import axios from 'axios'
 
-  const form = ref(null)
-  const router = useRouter()
+  // community 스토어
   const store = useCommunityStore()
+  // user 스토어
   const userStore = useUserStore()
+
+  // 리뷰 작성 필드 정보
   const title = ref(null)
   const movie_title = ref(null)
   const rank = ref(null)
@@ -51,14 +50,12 @@
       movie_title: movie_title.value,
       content: content.value,
       rank: rank.value,
+      // user 정보는 스토어에 저장된 로그인된 유저의 id 활용
       user: userStore.userId
     }
     console.log(data)
     store.createReview(data)
   }
-
-
-
 </script>
 
 <style scoped>
