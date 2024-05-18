@@ -4,7 +4,7 @@
     <form ref="form" @submit.prevent="login">
       <div>
         <label for="username">username : </label>
-        <input type="text" name="username" id="username">
+        <input type="text" name="username" id="username" v-model="username">
       </div>
 
       <div>
@@ -26,10 +26,11 @@ import { useUserStore } from '@/stores/user'
 const form = ref(null)
 const router = useRouter()
 const store = useUserStore()
+const username = ref("")
 
 const login = function () {
   const data = new FormData(form.value)
-  store.login(data)
+  store.login(data, username)
   form.value.reset()
   router.push({ name: "home" });
 } 
