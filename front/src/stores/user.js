@@ -6,6 +6,7 @@ export const useUserStore = defineStore(
   "user",
   () => {
     const token = ref(null);
+    const userPk = ref(null);
     const isLogin = computed(() => {
       if (token.value === null) {
         return false;
@@ -31,9 +32,10 @@ export const useUserStore = defineStore(
         url: "http://127.0.0.1:8000/accounts/login/",
         data,
       }).then((response) => {
-        console.log(response);
-        token.value = response.data.key;
-        console.log(token.value);
+        console.log(response.data);
+        token.value = response.data.token;
+        userPk.value = response.data.user_pk;
+        console.log(token.value, userPk.value);
       });
     };
 
@@ -46,11 +48,12 @@ export const useUserStore = defineStore(
         console.log(response);
         console.log("로그아웃되었습니다.");
         token.value = null
+        userPk.value = null
         console.log(token.value);
       });
     };
 
-    return { token, signup, login, logout, isLogin };
+    return { token, userPk, signup, login, logout, isLogin };
   },
   { persist: true }
 );
