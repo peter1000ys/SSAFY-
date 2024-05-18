@@ -68,6 +68,7 @@ export const useUserStore = defineStore("user", () => {
         console.log(response);
         console.log("로그아웃되었습니다.");
         token.value = null
+        userPk.value = null
         console.log(token.value);
       });
     };

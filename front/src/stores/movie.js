@@ -1,36 +1,48 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useUserStore } from '@/stores/user'
 export const useMovieStore = defineStore('movie', () => {
+  const userStore = useUserStore()
+
   const genres = ref([])
   const movies = ref([])
   const filteredMovies = ref([])
+  const movie = ref({})
+  const movieVideoKey = ref('')
+  const likesCount = ref(0)
+  const hatesCount = ref(0)
+  const favorited = ref(false)
+  const liked = ref(false)
+  const hated = ref(false)
+  const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5OTZjYzI3NTQ1MmIyOGE2NWQ1NmZkZTA5Njk0MWM4NCIsInN1YiI6IjY2M2Q4Y2UwMGYyYzdjMTlhNmM3NWI1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2XhNWrsPvokdXhVEWX5ZHBctmKl7y5WckUfnppu6nIE'
   const getGenres = function() {
     axios({
-      method:'get',
-      url:'http://127.0.0.1:8000/api/v1/movies/genres'
+      method: 'get',
+      url: 'http://127.0.0.1:8000/api/v1/movies/genres'
     })
     .then((res) => {
       console.log(res)
       genres.value = res.data
     })
-
   }
+
   const getMovies = function() {
     axios({
-      method:'get',
-      url:'http://127.0.0.1:8000/api/v1/movies/'
+      method: 'get',
+      url: 'http://127.0.0.1:8000/api/v1/movies/'
     })
     .then((res) => {
       console.log(res)
       movies.value = res.data
     })
   }
+
   const filterMovie = function(genreId) {
     filteredMovies.value = null
     axios({
-      method:'get',
-      url:`http://127.0.0.1:8000/api/v1/filter-genre/${genreId}/`
+      method: 'get',
+      url: `http://127.0.0.1:8000/api/v1/filter-genre/${genreId}/`
     })
     .then((res) => {
       console.log(res)
@@ -38,5 +50,88 @@ export const useMovieStore = defineStore('movie', () => {
     })
   }
 
-  return { genres, getGenres, movies, getMovies, filterMovie, filteredMovies }
-}, { persist: true})
+  const movieDetail = function (movieId) {
+    let options = {
+        method: 'GET',
+        url: `https://api.themoviedb.org/3/movie/${movieId}`,
+        params: {language: 'ko-KR'},
+        headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${ACCESS_TOKEN}`
+        }
+    };
+
+    axios
+    .request(options)
+    .then(function (response) {
+        movie.value = response.data
+        return movie.value.id
+    })
+    .then(function (movieId) {
+        axios
+      .request({
+          method: 'GET',
+          url: `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+          params: {language: 'en-US'},
+          headers: {
+              accept: 'application/json',
+              Authorization: `Bearer ${ACCESS_TOKEN}`
+          }
+      })
+      .then(function (response) {
+          const videoObj = response.data.results.find((obj) => obj.type === "Trailer")
+          movieVideoKey.value = videoObj.key
+          console.log(movieVideoKey.value)
+      })
+    })
+    .catch(function (error) {
+        console.error(error);
+    });
+  }
+  const likeMovie = function(movieId) {
+    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/likes/`, null, {
+      headers: {
+        Authorization: `Token ${userStore.token}`
+      }
+    })
+      .then((res) => {
+        liked.value = res.data.liked
+        likesCount.value = res.data.count
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
+  const hateMovie = function(movieId) {
+    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/hates/`, null, {
+      headers: {
+        Authorization: `Token ${userStore.token}`
+      }
+    })
+      .then((res) => {
+        console.log(res.data)
+        hated.value = res.data.hated
+        hatesCount.value = res.data.count
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
+  const favoriteMovie = function(movieId) {
+    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/favorite/`, null, {
+      headers: {
+        Authorization: `Token ${userStore.token}`
+      }
+    })
+      .then((res) => {
+        favorited.value = res.data.favorited
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
+  return { genres, getGenres, movies, getMovies, filterMovie, filteredMovies, movieDetail, movie, movieVideoKey, liked, hated, favorited, likeMovie, hateMovie, favoriteMovie }
+}, { persist: true })

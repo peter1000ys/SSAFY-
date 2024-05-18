@@ -9,6 +9,9 @@ urlpatterns = [
     path('fetch-movies/', FetchMoviesAPIView.as_view(), name='fetch-movies'),
     path('get-genres/', FetchGenresAPIView.as_view(), name='get-genres'),
     path("filter-genre/<int:genre_pk>/", views.filter_genre, name="filter_genre"),
+    path("movies/<int:movie_pk>/likes/", views.movie_likes, name="movie_likes"),
+    path("movies/<int:movie_pk>/hates/<int:user_pk>/", views.movie_hates, name="movie_hates"),
+    path("movies/<int:movie_pk>/favorite/", views.movie_favorite, name="movie_favorite"),
 ]
 
 
