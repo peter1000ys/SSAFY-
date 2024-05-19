@@ -80,7 +80,13 @@ export const useMovieStore = defineStore('movie', () => {
       })
       .then(function (response) {
           const videoObj = response.data.results.find((obj) => obj.type === "Trailer")
-          movieVideoKey.value = videoObj.key
+          console.log(videoObj)
+          if (videoObj ===undefined) {
+            movieVideoKey.value = null
+          }
+          else {
+            movieVideoKey.value = videoObj.key
+          }
           console.log(movieVideoKey.value)
       })
     })
@@ -90,11 +96,7 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   const read_lhf = function(movieId) {
-    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/${userStore.userId}/`, null, {
-      headers: {
-        Authorization: `Token ${userStore.token}`
-      }
-    })
+    axios.get(`http://127.0.0.1:8000/api/v1/movies/${movieId}/${userStore.userId}/`)
       .then((res) => {
         liked.value = res.data.liked
         hated.value = res.data.hated
