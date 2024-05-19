@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from .utils import fetch_and_save_movies, fetch_and_save_genres
-
+from accounts.models import User
 # Create your views here.
 @api_view(['GET', 'POST'])
 # @permission_classes([IsAuthenticated])
@@ -49,9 +49,9 @@ def filter_genre(request, genre_pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def movie_likes(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    user = request.user
+def movie_likes(request, movie_pk, user_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = get_object_or_404(User, pk=user_pk)
     if movie.like_users.filter(pk=user.pk).exists():
         movie.like_users.remove(user)
         like = False
@@ -66,9 +66,9 @@ def movie_likes(request, movie_id):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def movie_hates(request, movie_id, user_pk):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    user = request.user
+def movie_hates(request, movie_pk, user_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = get_object_or_404(User, pk=user_pk)
     if movie.hate_users.filter(pk=user.pk).exists():
         movie.hate_users.remove(user)
         hate = False
@@ -83,9 +83,9 @@ def movie_hates(request, movie_id, user_pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def movie_favorite(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    user = request.user
+def movie_favorite(request, movie_pk, user_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = get_object_or_404(User, pk=user_pk)
     if movie.favorite_users.filter(pk=user.pk).exists():
         movie.favorite_users.remove(user)
         favorite = False
@@ -98,9 +98,31 @@ def movie_favorite(request, movie_id):
     }
     return JsonResponse(favorite_status)
 
-
-
-
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def read_lhf(request,movie_pk, user_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = get_object_or_404(User, pk=user_pk)
+    if movie.favorite_users.filter(pk=user.pk).exists():
+        favorite = True
+    else:
+        favorite = False
+    if movie.hate_users.filter(pk=user.pk).exists():
+        hate = True
+    else:
+        hate = False
+    if movie.like_users.filter(pk=user.pk).exists():
+        like = True
+    else:
+        like = False
+    lhf_status = {
+        'liked': like,
+        'hated': hate,
+        'favorited': favorite,
+        'like_count': movie.like_users.count(),
+        'hate_count': movie.hate_users.count(),
+    }
+    return JsonResponse(lhf_status)
 
 
 # TMDB에서 장르 가져오기 위한 view함수

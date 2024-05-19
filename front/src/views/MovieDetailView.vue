@@ -24,7 +24,7 @@
       <h3>줄거리</h3>
       <p>{{ store.movie.overview }}</p>
     </div>
-    <div>
+    <div v-if="userStore.isLogin">
       <button @click="likeMovie(store.movie.id)">
         {{ store.liked ? '좋아요 취소' : '좋아요' }} ({{ store.likesCount }})
       </button>
@@ -35,9 +35,15 @@
         {{ store.favorited ? '찜 취소' : '찜하기' }}
       </button>
     </div>
+    <div v-else>
+      <button @click="loginAlert">{{ '좋아요' }}</button>
+      <button @click="loginAlert">{{ '싫어요' }}</button>
+      <button @click="loginAlert">{{ '찜하기' }}</button>
+    </div>
     <div class="movie-detail-child">
       <h3>공식 예고편</h3>
       <button data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Trailer
       </button>
     </div>
   </div>
@@ -47,11 +53,13 @@
 <script setup>
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/movie'
+import { useUserStore } from '@/stores/user'
 import YoutubeTrailerModal from '@/components/YoutubeTrailerModal.vue'
-
+const userStore = useUserStore()
 const store = useMovieStore()
+const router = useRouter()
 const likeMovie = (movieId) => {
   store.likeMovie(movieId)
     }
@@ -63,6 +71,10 @@ const likeMovie = (movieId) => {
     const favoriteMovie = (movieId) => {
       store.favoriteMovie(movieId)
     }
+const loginAlert = () => {
+  window.alert('로그인이 필요합니다!')
+  router.push({name: 'login'})
+}
 onMounted(() => {
   const route = useRoute()
   const movieId = route.params.movieId
@@ -93,42 +105,4 @@ img {
   width: 300px;
 }
 
-.youtube-button { 
-background: red;
-border-radius: 50% / 10%;
-color: #FFFFFF;
-font-size: 2em; 
-height: 3em;
-margin: 20px auto;
-padding: 0;
-position: relative;
-text-align: center;
-text-indent: 0.1em;
-transition: all 150ms ease-out;
-width: 4em;
-}
-
-.youtube-button::before { 
-background: inherit;
-border-radius: 5% / 50%;
-bottom: 9%;
-content: "";
-left: -5%;
-position: absolute;
-right: -5%;
-top: 9%;
-}
-
-.youtube-button::after {
-border-style: solid;
-border-width: 1em 0 1em 1.732em;
-border-color: transparent transparent transparent rgba(255, 255, 255, 0.75);
-content: ' ';
-font-size: 0.75em;
-height: 0;
-margin: -1em 0 0 -0.75em;
-top: 50%;
-position: absolute;
-width: 0;
-}
 </style>

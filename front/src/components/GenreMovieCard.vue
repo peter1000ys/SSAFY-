@@ -19,12 +19,16 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
+import { useMovieStore } from '@/stores/movie';
 defineProps({
     movie: Object
 })
 const router = useRouter()
+const store = useMovieStore()
 const MovieDetail = function(movieId) {
+  store.read_lhf(movieId)
   router.push({name:'detail', params: {movieId: movieId}})
+  
 }
 </script>
 

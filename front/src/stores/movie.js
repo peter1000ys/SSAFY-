@@ -88,8 +88,27 @@ export const useMovieStore = defineStore('movie', () => {
         console.error(error);
     });
   }
+
+  const read_lhf = function(movieId) {
+    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/${userStore.userId}/`, null, {
+      headers: {
+        Authorization: `Token ${userStore.token}`
+      }
+    })
+      .then((res) => {
+        liked.value = res.data.liked
+        hated.value = res.data.hated
+        favorited.value = res.data.favorited
+        likesCount.value = res.data.like_count
+        hatesCount.value = res.data.hate_count
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+  
   const likeMovie = function(movieId) {
-    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/likes/`, null, {
+    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/likes/${userStore.userId}/`, null, {
       headers: {
         Authorization: `Token ${userStore.token}`
       }
@@ -104,7 +123,7 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   const hateMovie = function(movieId) {
-    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/hates/`, null, {
+    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/hates/${userStore.userId}/`, null, {
       headers: {
         Authorization: `Token ${userStore.token}`
       }
@@ -120,7 +139,7 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   const favoriteMovie = function(movieId) {
-    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/favorite/`, null, {
+    axios.post(`http://127.0.0.1:8000/api/v1/movies/${movieId}/favorite/${userStore.userId}/`, null, {
       headers: {
         Authorization: `Token ${userStore.token}`
       }
@@ -133,5 +152,5 @@ export const useMovieStore = defineStore('movie', () => {
       })
   }
 
-  return { genres, getGenres, movies, getMovies, filterMovie, filteredMovies, movieDetail, movie, movieVideoKey, liked, hated, favorited, likeMovie, hateMovie, favoriteMovie }
+  return { genres, getGenres, movies, getMovies, filterMovie, filteredMovies, movieDetail, movie, movieVideoKey, liked, hated, favorited, likeMovie, hateMovie, favoriteMovie, read_lhf, likesCount, hatesCount}
 }, { persist: true })
