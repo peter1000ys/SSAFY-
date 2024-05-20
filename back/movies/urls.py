@@ -11,14 +11,17 @@ urlpatterns = [
     path('fetch-movies/', FetchMoviesAPIView.as_view(), name='fetch-movies'),
     path('get-genres/', FetchGenresAPIView.as_view(), name='get-genres'),
     path("filter-genre/<int:genre_pk>/", views.filter_genre, name="filter_genre"),
-    path("filter-genre/<int:genre_pk>/recommend/", views.filter_genre_rec, name="filter_genre_rec"),
+    #path("filter-genre/<int:genre_pk>/recommend/", views.filter_genre_rec, name="filter_genre_rec"),
     path("movies/<int:movie_pk>/likes/<int:user_pk>/", views.movie_likes, name="movie_likes"),
-    path("movies/liked_genres/<int:user_pk>/", views.liked_genres, name="liked_genres"),
+    path("movies/liked_genres/<int:user_pk>/", views.liked_genres_with_movies, name="liked_genres_with_movies"),
     path("movies/<int:movie_pk>/hates/<int:user_pk>/", views.movie_hates, name="movie_hates"),
     path("movies/<int:movie_pk>/favorite/<int:user_pk>/", views.movie_favorite, name="movie_favorite"),
     path('movies/recommend/weekday/', views.today_recommend),
     path('movies/recommend/korea/', views.korean_movies),
     path('movies/recommend/week/', views.week_recommend),
+    
+    path('movies/<int:user_pk>/my_favorite/', views.my_favorite),
+    path('search/', views.search),
 ]
 
 

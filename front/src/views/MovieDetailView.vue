@@ -1,5 +1,5 @@
 <template>
-  <YoutubeTrailerModal />
+  
   <div class="movie-detail-container">
     <img :src="`https://image.tmdb.org/t/p/w500${store.movie.poster_path}`" alt="">
     <h3>{{ store.movie.title }}</h3>
@@ -83,14 +83,10 @@
       </div>
       <i class="bi bi-plus"  @click="loginAlert" style="font-size: 2rem; cursor: pointer;"></i>
     </div>
-    <div class="movie-detail-child">
-      <h3>공식 예고편</h3>
-      <i class="bi bi-youtube" 
-       data-bs-toggle="modal" 
-       data-bs-target="#exampleModal"
-       style="font-size: 5rem; color: #d03939; cursor: pointer;"></i>
-    </div>
   </div>
+  <iframe id="player" type="text/html" width="1200" height="800"
+              :src="`http://www.youtube.com/embed/${store.movieVideoKey}?autoplay=1&mute=1`"
+              frameborder="0"></iframe>
   <div>
     <nav>
       <RouterLink :to="{name: 'related'}" @click="getSimilar(store.movie.id)">비슷한 콘텐츠</RouterLink>
@@ -107,7 +103,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
 import { RouterLink, RouterView } from 'vue-router'
-import YoutubeTrailerModal from '@/components/YoutubeTrailerModal.vue'
+
 const userStore = useUserStore()
 const store = useMovieStore()
 const router = useRouter()
@@ -149,8 +145,6 @@ watch(
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;800&display=swap");
-
 .movie-detail-container {
   display: flex;
   flex-direction: column;

@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import MovieListSerializer, MovieSerializer, GenreListSerializer
+from .serializers import MovieListSerializer, MovieSerializer, GenreListSerializer,GenreMoviesSerializer
 from .models import Movie,Genre
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.views import APIView
@@ -190,25 +190,49 @@ def similar_movies(request, movie_pk):
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def liked_genres(request, user_pk):
+#     user = get_object_or_404(User, pk=user_pk)
+#     movies = user.like_movies.all()
+#     genres = []
+#     for movieId in movies:
+#         movie = get_object_or_404(Movie, title=movieId)
+#         genres.extend(movie.genres.all())
+#     genres = list(set(genres))
+#     serializer = GenreListSerializer(genres, many=True)
+#     return Response(serializer.data)
+    
+# @api_view(['GET'])
+# def filter_genre_rec(request, genre_pk):
+#     if request.method == 'GET':
+#         movies = get_list_or_404(Movie.objects.order_by('-popularity'), genres = genre_pk)[:15]
+#         serializers = MovieListSerializer(movies, many=True)
+#         return Response(serializers.data)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def liked_genres(request, user_pk):
+def liked_genres_with_movies(request, user_pk):
     user = get_object_or_404(User, pk=user_pk)
-    movies = user.like_movies.all()
-    genres = []
-    for movieId in movies:
-        movie = get_object_or_404(Movie, title=movieId)
-        genres.extend(movie.genres.all())
-    genres = list(set(genres))
-    serializer = GenreListSerializer(genres, many=True)
-    return Response(serializer.data)
+    liked_movies = user.like_movies.all()
+    genres_dict = {}
+
+    # Get genres from liked movies
+    for movie in liked_movies:
+        for genre in movie.genres.all():
+            if genre not in genres_dict:
+                genres_dict[genre] = []
     
-@api_view(['GET'])
-def filter_genre_rec(request, genre_pk):
-    if request.method == 'GET':
-        movies = get_list_or_404(Movie.objects.order_by('-popularity'), genres = genre_pk)[:15]
-        serializers = MovieListSerializer(movies, many=True)
-        return Response(serializers.data)
+    # Get all movies and filter by genres
+    for genre in genres_dict:
+        genre_movies = Movie.objects.filter(genres=genre).order_by('-popularity')[:15]
+        genres_dict[genre] = genre_movies
+    
+    # Serialize the data
+    data = {genre.name: GenreMoviesSerializer({'genre': genre, 'movies': movies}).data for genre, movies in genres_dict.items()}
+    return Response(data)
+
+
+
 
 # TMDB에서 장르 가져오기 위한 view함수
 class FetchGenresAPIView(APIView):
@@ -229,3 +253,27 @@ class FetchMoviesAPIView(APIView):
             return Response({'status': 'success'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def my_favorite(request, user_pk):
+    if request.method == 'GET':
+        movies = Movie.objects.filter(favorite_users=user_pk)
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data)
+
+def search(request):
+    print(request)
+    query = request.GET.get('query', '')
+    if query:
+        movies = Movie.objects.filter(title__icontains=query)
+        results = [{
+            'tmdb_id': movie.tmdb_id,
+            'title': movie.title,
+            'overview': movie.overview,
+            'poster_path': movie.poster_path,
+            'genres': [genre.name for genre in movie.genres.all()],
+            } for movie in movies]
+        return JsonResponse({'results': results})
+    return JsonResponse({'results': []})

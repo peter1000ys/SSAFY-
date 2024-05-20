@@ -8,7 +8,7 @@ export const useMovieStore = defineStore('movie', () => {
   const genres = ref([])
   const movies = ref([])
   const filteredMovies = ref([])
-  const filteredMoviesRec = ref([])
+ 
   const movie = ref({})
   const movieVideoKey = ref('')
   const likesCount = ref(0)
@@ -52,17 +52,7 @@ export const useMovieStore = defineStore('movie', () => {
       filteredMovies.value = res.data
     })
   }
-  const filterMovieRecommend = function(genreId) {
-    filteredMoviesRec.value = null
-    axios({
-      method: 'get',
-      url: `http://127.0.0.1:8000/api/v1/filter-genre/${genreId}/recommend/`
-    })
-    .then((res) => {
-      console.log(res)
-      filteredMoviesRec.value = res.data
-    })
-  }
+
 
   const movieDetail = function (movieId) {
     let options = {
@@ -175,5 +165,5 @@ export const useMovieStore = defineStore('movie', () => {
         })
   }
 
-  return { genres, getGenres, movies, getMovies, filterMovie, filteredMovies, movieDetail, movie, movieVideoKey, liked, hated, favorited, likeMovie, hateMovie, favoriteMovie, read_lhf, likesCount, hatesCount, getSimilar, similarMovies, filterMovieRecommend, filteredMoviesRec}
+  return { genres, getGenres, movies, getMovies, filterMovie, filteredMovies, movieDetail, movie, movieVideoKey, liked, hated, favorited, likeMovie, hateMovie, favoriteMovie, read_lhf, likesCount, hatesCount, getSimilar, similarMovies}
 }, { persist: true })

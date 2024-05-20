@@ -1,9 +1,9 @@
 
 <template>
   <div>
-    <h1>Genre : {{ genreName }}</h1>
+
     <div class="movie-card-container">
-      <div v-for="movie in store.filteredMovies" :key="movie.id">
+      <div v-for="movie in movies['movies']" :key="movie.pk">
               <GenreMovieCard :movie="movie" />
             </div>
 
@@ -13,18 +13,10 @@
 
 <script setup>
 import GenreMovieCard from '@/components/GenreMovieCard.vue';
-import { onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useMovieStore } from '@/stores/movie';
 const props = defineProps({
-  genre:Object
+  movies:Object
 })
-console.log(props.genre.tmdb_id)
-const route = useRoute()
-const GenreId = ref(props.genre.tmdb_id)
-const store = useMovieStore()
-const genreName = ref('');
-
+console.log(props.movies)
 
 
 </script>

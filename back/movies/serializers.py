@@ -2,10 +2,20 @@ from rest_framework import serializers
 from .models import Movie, Genre
 from accounts.models import User
 
+
+class GenreMoviesSerializer(serializers.Serializer):
+    class MovieListSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Movie
+            fields = ('pk', 'title', 'overview','release_date','poster_path','vote_count','vote_average')
+            
+    genre = serializers.CharField(source='genre.name')
+    movies = MovieListSerializer(many=True)
+
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
-        exclude = ('tmdb_id', )
+        fields = '__all__'
 
 
 class GenreListSerializer(serializers.ModelSerializer):

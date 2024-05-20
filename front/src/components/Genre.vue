@@ -1,42 +1,72 @@
-
 <template>
   <div>
-    <h1>Genre : {{ genreName }}</h1>
+    <h1>Genre: {{ genreName }}</h1>
     <div class="movie-card-container">
-      <div v-for="movie in store.filteredMovies" :key="movie.id">
-              <GenreMovieCard :movie="movie" />
-            </div>
-
+      <div v-for="movie in paginatedStoreMovies" :key="movie.id" class="movie-card">
+        <GenreMovieCard :movie="movie" />
+      </div>
+    </div>
+    <div class="pagination">
+      <button @click="prevPage" :disabled="currentPage === 1">이전</button>
+      <span>{{ currentPage }} / {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import GenreMovieCard from '@/components/GenreMovieCard.vue';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMovieStore } from '@/stores/movie';
-const route = useRoute()
-const GenreId = ref(route.params.genreId)
-const store = useMovieStore()
+
+const route = useRoute();
+const genreId = ref(route.params.genreId);
+const store = useMovieStore();
 const genreName = ref('');
+const currentPage = ref(1);
+const itemsPerPage = 10;
 
 watch(() => route.params.genreId, (newId) => {
-  GenreId.value = newId;
+  genreId.value = newId;
+  currentPage.value = 1; // Reset to the first page when genre changes
   fetchMovies();
   updateGenreName();
 });
 
 const fetchMovies = () => {
-  store.filterMovie(GenreId.value);
+  store.filterMovie(genreId.value);
 };
+
 const updateGenreName = () => {
-  const genre = store.genres.find(g => g.tmdb_id === Number(GenreId.value));
+  const genre = store.genres.find(g => g.tmdb_id === Number(genreId.value));
   genreName.value = genre ? genre.name : 'Unknown';
 };
 
-fetchMovies();
-updateGenreName();
+const paginatedStoreMovies = computed(() => {
+  const movies = store.filteredMovies || []; // Ensure movies is an array
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return movies.slice(start, end);
+});
+
+const totalPages = computed(() => {
+  const movies = store.filteredMovies || []; // Ensure movies is an array
+  return Math.ceil(movies.length / itemsPerPage);
+});
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--;
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++;
+};
+
+onMounted(() => {
+  fetchMovies();
+  updateGenreName();
+});
 </script>
 
 <style scoped>
@@ -72,5 +102,13 @@ updateGenreName();
     flex: 1 1 calc(50% - 20px); /* 2개의 열로 조정 */
     max-width: calc(50% - 20px);
   }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 </style>

@@ -2,16 +2,15 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useUserStore } from './user'
-export const useRecommendStore = defineStore('recommend', () => {
-  // 해당 요일 영화 추천 목록 
-  const weekday = ref([])
-  // 한국 영화 인기작 목록
-  const koMovies = ref([])
-  // 일주일 추천 영화 목록
-  const weekMovies = ref([])
 
+export const useRecommendStore = defineStore('recommend', () => {
+  const weekday = ref([])
+  const koMovies = ref([])
+  const weekMovies = ref([])
   const likedGenres = ref([])
+
   const userStore = useUserStore()
+
   const getTodayRecommend = function() {
     axios({
       method: 'get',
@@ -34,7 +33,7 @@ export const useRecommendStore = defineStore('recommend', () => {
     })
   }
 
-  const getWeekMovies= function() {
+  const getWeekMovies = function() {
     axios({
       method: 'get',
       url: 'http://127.0.0.1:8000/api/v1/movies/recommend/week/'
@@ -45,7 +44,7 @@ export const useRecommendStore = defineStore('recommend', () => {
     })
   }
 
-  const get_liked_genres = function(userId) {
+  const getLikedGenresWithMovies = function(userId) {
     axios({
       method: 'post',
       url: `http://127.0.0.1:8000/api/v1/movies/liked_genres/${userId}/`,
@@ -58,5 +57,20 @@ export const useRecommendStore = defineStore('recommend', () => {
       likedGenres.value = res.data
     })
   }
-  return {weekday, getTodayRecommend, koMovies, getKoreanMovies, weekMovies, getWeekMovies, likedGenres, get_liked_genres}
+
+  const clearLikedGenres = function() {
+    likedGenres.value = []
+  }
+
+  return {
+    weekday, 
+    getTodayRecommend, 
+    koMovies, 
+    getKoreanMovies, 
+    weekMovies, 
+    getWeekMovies, 
+    likedGenres, 
+    getLikedGenresWithMovies, 
+    clearLikedGenres
+  }
 }, { persist: true })
