@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import CustomAuthToken
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('movies.urls')),
@@ -24,5 +24,4 @@ urlpatterns = [
     path('api/v1_2/', include('accounts.urls')),
     path('accounts/', include('dj_rest_auth.urls')),
     path('accounts/signup/', include('dj_rest_auth.registration.urls')),
-    path('accounts/login/', CustomAuthToken.as_view(), name='api_token_auth')
 ]
