@@ -8,7 +8,8 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from .utils import fetch_and_save_movies, fetch_and_save_genres
-
+from accounts.models import User
+from datetime import datetime
 # Create your views here.
 @api_view(['GET', 'POST'])
 # @permission_classes([IsAuthenticated])
@@ -49,9 +50,9 @@ def filter_genre(request, genre_pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def movie_likes(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    user = request.user
+def movie_likes(request, movie_pk, user_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = get_object_or_404(User, pk=user_pk)
     if movie.like_users.filter(pk=user.pk).exists():
         movie.like_users.remove(user)
         like = False
@@ -66,9 +67,9 @@ def movie_likes(request, movie_id):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def movie_hates(request, movie_id, user_pk):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    user = request.user
+def movie_hates(request, movie_pk, user_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = get_object_or_404(User, pk=user_pk)
     if movie.hate_users.filter(pk=user.pk).exists():
         movie.hate_users.remove(user)
         hate = False
@@ -83,9 +84,9 @@ def movie_hates(request, movie_id, user_pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def movie_favorite(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    user = request.user
+def movie_favorite(request, movie_pk, user_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = get_object_or_404(User, pk=user_pk)
     if movie.favorite_users.filter(pk=user.pk).exists():
         movie.favorite_users.remove(user)
         favorite = False
@@ -98,9 +99,70 @@ def movie_favorite(request, movie_id):
     }
     return JsonResponse(favorite_status)
 
+@api_view(['GET'])
+def read_lhf(request,movie_pk, user_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = get_object_or_404(User, pk=user_pk)
+    if movie.favorite_users.filter(pk=user.pk).exists():
+        favorite = True
+    else:
+        favorite = False
+    if movie.hate_users.filter(pk=user.pk).exists():
+        hate = True
+    else:
+        hate = False
+    if movie.like_users.filter(pk=user.pk).exists():
+        like = True
+    else:
+        like = False
+    lhf_status = {
+        'liked': like,
+        'hated': hate,
+        'favorited': favorite,
+        'like_count': movie.like_users.count(),
+        'hate_count': movie.hate_users.count(),
+    }
+    return JsonResponse(lhf_status)
 
 
-
+@api_view(['GET'])
+def today_recommend(request):
+    movies = []
+    # 현재 날짜와 시간 가져오기
+    now = datetime.now()
+    # 요일을 문자열로 변환 (예: 'Monday', 'Tuesday', ...)
+    today_weekday = now.strftime('%A')
+    # 지피티 추천
+    # 월요일 : 지친하루 피로룰 풀기 위해 코미디, 드라마
+    if today_weekday == 'Monday':
+        today_genres = [18, 35]
+    # 화요일 : 주의 초반으로 어느정도 긴장감을 주는 SF, 공포
+    elif today_weekday == 'Tuesday':
+        today_genres = [27, 878]
+    # 수요일 : 주 중반으로 활력을 줄 수 있는 액션, 전쟁
+    elif today_weekday == 'Wednesday':
+        today_genres = [28, 10752]
+    # 목요일 : 조금 더 가벼운 즐거움을 주는 미스터리, 판타지
+    elif today_weekday == 'Thursday':
+        today_genres = [9648, 14]
+    # 금요일 : 불금의 시작, 로멘스와 모험, 스릴러, 범죄
+    elif today_weekday == 'Friday':
+        today_genres = [10749, 12, 53, 80]
+    # 토요일 : 가족들과 함께 즐길 수 있는 애니메이션, 가족, 음악
+    elif today_weekday == 'Saturday':
+        today_genres = [16, 10751, 10402]
+    # 일요일 : 가볍게 지식을 얻으며 휴식할 수 있는 다큐멘터리, 역사
+    elif today_weekday == 'Sunday':
+        today_genres = [99, 36]
+    # for genre in today_genres:
+    #     genre_movies = get_list_or_404(Movie, genres=genre)
+    #     movies.extend(genre_movies)
+    # movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:10]
+    movies = get_list_or_404(Movie.objects.filter(genres__in=today_genres))
+    movies = list(set(movies))
+    movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:10]
+    serializers = MovieListSerializer(movies, many=True)
+    return Response(serializers.data)
 
 
 # TMDB에서 장르 가져오기 위한 view함수

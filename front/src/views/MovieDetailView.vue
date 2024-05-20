@@ -12,11 +12,9 @@
       <h3>장르</h3>
       <div>
         <span v-for="genreSel in store.movie.genres" :key="genreSel.id">
-          <p v-for="genre in store.genres">
-            <p v-if="genre.tmdb_id===genreSel.id">
-              {{ genre.name }}&nbsp;
-            </p>
-          </p>
+          <span v-if="store.genres.find(genre => genre.tmdb_id === genreSel.id)">
+            {{ store.genres.find(genre => genre.tmdb_id === genreSel.id).name }}&nbsp;
+          </span>
         </span>
       </div>
     </div>
@@ -24,21 +22,73 @@
       <h3>줄거리</h3>
       <p>{{ store.movie.overview }}</p>
     </div>
+    <div class="d-flex justify-content-start" v-if="userStore.isLogin">
+      <div style="margin-right: 30px;">
+        <span>
+          <i class="bi bi-hand-thumbs-up" 
+           @click="likeMovie(store.movie.id)" 
+           v-if="!store.liked" 
+           style="font-size: 2rem; cursor: pointer;"
+           ></i>
+        <i class="bi bi-hand-thumbs-up-fill" 
+           @click="likeMovie(store.movie.id)" 
+           v-else 
+           data-bs-toggle="popover" 
+           data-bs-trigger="hover" 
+           data-bs-placement="top" 
+           :data-bs-content="`${store.likesCount}명이 좋아합니다.`"
+           style="font-size: 2rem; cursor: pointer;"></i>
+        </span>
+      
+      </div>
+      <div style="margin-right: 30px;">
+        <span>
+          <i class="bi bi-hand-thumbs-down" 
+           @click="hateMovie(store.movie.id)" 
+           v-if="!store.hated" 
+           style="font-size: 2rem; cursor: pointer;"
+           ></i>
+        <i class="bi bi-hand-thumbs-down-fill" 
+           @click="hateMovie(store.movie.id)" 
+           v-else 
+           data-bs-toggle="popover" 
+           data-bs-trigger="hover" 
+           data-bs-placement="top" 
+           :data-bs-content="`${store.hatesCount}명이 싫어합니다.`"
+           style="font-size: 2rem; cursor: pointer;"></i>
+        </span>
+    </div>
     <div>
-      <button @click="likeMovie(store.movie.id)">
-        {{ store.liked ? '좋아요 취소' : '좋아요' }} ({{ store.likesCount }})
-      </button>
-      <button @click="hateMovie(store.movie.id)">
-        {{ store.hated ? '싫어요 취소' : '싫어요' }} ({{ store.hatesCount }})
-      </button>
-      <button @click="favoriteMovie(store.movie.id)">
-        {{ store.favorited ? '찜 취소' : '찜하기' }}
-      </button>
+      <span>
+          <i class="bi bi-plus" 
+           @click="favoriteMovie(store.movie.id)" 
+           v-if="!store.favorited" 
+           style="font-size: 2rem; cursor: pointer;"
+           ></i>
+        <i class="bi bi-check-lg" 
+           @click="favoriteMovie(store.movie.id)" 
+           v-else 
+           style="font-size: 2rem; cursor: pointer;"
+           ></i>
+        </span>
+    </div>
+    </div>
+
+    <div class="d-flex justify-content-start" v-else>
+      <div style="margin-right: 30px;">
+        <i class="bi bi-hand-thumbs-up"  @click="loginAlert" style="font-size: 2rem; cursor: pointer;"></i>
+      </div>
+      <div style="margin-right: 30px;">
+        <i class="bi bi-hand-thumbs-down" @click="loginAlert" style="font-size: 2rem; cursor: pointer;"></i>
+      </div>
+      <i class="bi bi-plus"  @click="loginAlert" style="font-size: 2rem; cursor: pointer;"></i>
     </div>
     <div class="movie-detail-child">
       <h3>공식 예고편</h3>
-      <button data-bs-toggle="modal" data-bs-target="#exampleModal">
-      </button>
+      <i class="bi bi-youtube" 
+       data-bs-toggle="modal" 
+       data-bs-target="#exampleModal"
+       style="font-size: 5rem; color: #d03939; cursor: pointer;"></i>
     </div>
   </div>
 
@@ -46,12 +96,15 @@
 
 <script setup>
 import axios from 'axios'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/movie'
+import { useUserStore } from '@/stores/user'
 import YoutubeTrailerModal from '@/components/YoutubeTrailerModal.vue'
-
+const userStore = useUserStore()
 const store = useMovieStore()
+const router = useRouter()
 const likeMovie = (movieId) => {
   store.likeMovie(movieId)
     }
@@ -63,6 +116,10 @@ const likeMovie = (movieId) => {
     const favoriteMovie = (movieId) => {
       store.favoriteMovie(movieId)
     }
+const loginAlert = () => {
+  window.alert('로그인이 필요합니다!')
+  router.push({name: 'login'})
+}
 onMounted(() => {
   const route = useRoute()
   const movieId = route.params.movieId
@@ -70,9 +127,12 @@ onMounted(() => {
   store.movieDetail(movieId)
 
 })
+
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;800&display=swap");
+
 .movie-detail-container {
   display: flex;
   flex-direction: column;
@@ -93,42 +153,4 @@ img {
   width: 300px;
 }
 
-.youtube-button { 
-background: red;
-border-radius: 50% / 10%;
-color: #FFFFFF;
-font-size: 2em; 
-height: 3em;
-margin: 20px auto;
-padding: 0;
-position: relative;
-text-align: center;
-text-indent: 0.1em;
-transition: all 150ms ease-out;
-width: 4em;
-}
-
-.youtube-button::before { 
-background: inherit;
-border-radius: 5% / 50%;
-bottom: 9%;
-content: "";
-left: -5%;
-position: absolute;
-right: -5%;
-top: 9%;
-}
-
-.youtube-button::after {
-border-style: solid;
-border-width: 1em 0 1em 1.732em;
-border-color: transparent transparent transparent rgba(255, 255, 255, 0.75);
-content: ' ';
-font-size: 0.75em;
-height: 0;
-margin: -1em 0 0 -0.75em;
-top: 50%;
-position: absolute;
-width: 0;
-}
 </style>
