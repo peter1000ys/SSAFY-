@@ -19,6 +19,8 @@
     </div>
     <div v-else>
       <button @click="logout">로그아웃</button>
+      <span> | </span>
+      <RouterLink :to="{ name:'profile'}">프로필</RouterLink>
     </div>
   </div>
   <RouterView/>

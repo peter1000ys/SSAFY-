@@ -183,3 +183,22 @@ class FetchMoviesAPIView(APIView):
             return Response({'status': 'success'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+# 프로필 찜한 영화 가져오기
+# serializer 는 있는거 사용!
+def profile_favorite(request, user_pk):
+    if request.method == 'GET':
+        movies = Movie.objects.filter(favorite_users=user_pk)
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def profile_like(request, user_pk):
+    if request.method == 'GET':
+        movies = Movie.objects.filter(like_users=user_pk)
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data)

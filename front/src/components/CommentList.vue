@@ -12,6 +12,7 @@
     </button>
     <p>좋아요 수 : {{ commentLikeCount }}</p>
     <p>싫어요 수 : {{ commentHateCount }}</p>
+    <hr>
   </div>
 </template>
 

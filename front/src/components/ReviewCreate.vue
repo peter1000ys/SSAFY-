@@ -55,6 +55,10 @@
     }
     console.log(data)
     store.createReview(data)
+    title.value=""
+    movie_title.value=""
+    rank.value=""
+    content.value=""
   }
 </script>
 
