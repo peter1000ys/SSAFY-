@@ -3,10 +3,21 @@
   <div>
     <h1>ReviewCreate</h1>
     <form @submit.prevent="createReview">
+      <div>
+        <h1>영화 검색</h1>
+        <label for="movie_title_search">Movie title search</label>
+        <input v-model="query" @input="searchMovies" placeholder="Search for a movie" id="movie_title_search" name="movie_title_search"/>
+        <ul v-if="movies.length">
+          <li v-for="movie in movies" :key="movie.id" class="search-result__card" @click="selectMovie(movie.title)">
+            <img class="img" :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="...">
+            {{ movie.title }}
+          </li>
+        </ul>
+      </div>
 
       <div>
-        <label for="movie_title">Movie title : </label>
-        <input type="text" id="movie_title" name="movie_title" v-model="movie_title">
+        <!-- <label for="movie_title">Movie title : </label> -->
+        <input type="hidden" id="movie_title" name="movie_title" v-model="movie_title">
       </div>
 
       <div>
@@ -33,7 +44,7 @@
   import { ref } from 'vue'
   import { useCommunityStore } from '@/stores/community'
   import { useUserStore } from '@/stores/user'
-  // import axios from 'axios';
+  import axios from 'axios'
 
   // community 스토어
   const store = useCommunityStore()
@@ -47,9 +58,38 @@
   const content = ref(null)
 
   // 검색 변수
-  // const query = ref('');
-  // const movies = ref([]);
+  const query = ref('')
+  const movies = ref([])
 
+  // 검색 기능
+  const searchMovies = async () => {
+  if (query.value.length >= 2) {
+    try {
+      // const response = await axios.get('https://api.themoviedb.org/3/search/movie', {
+      const response = await axios.get('http://127.0.0.1:8000/api/v1/search/', {
+        params: {
+          // api_key: '958a2ba52a17b56a5320e5698bd1b258',
+          query: query.value
+          // language: 'ko-KR'
+        }
+      })
+      movies.value = response.data.results
+    } catch (error) {
+      console.error('영화 정보를 가져오는 중 오류 발생:', error);
+    }
+    } else {
+      movies.value = [];
+    }
+  }
+
+  // 영화 선택
+  const selectMovie = (title) => {
+    movie_title.value = title
+    query.value = title
+    searchMovies()
+  }
+
+  // 리뷰 생성
   const createReview = function() {
     const data = {
       title: title.value,
@@ -65,9 +105,18 @@
     movie_title.value=""
     rank.value=""
     content.value=""
+    query.value = ""
   }
 </script>
 
 <style scoped>
+.img{
+  width: 100px;
+}
 
+.search-result__card:hover  {
+  cursor: pointer;
+  color: white;
+  background-color: #3B82F6; 
+}
 </style>
