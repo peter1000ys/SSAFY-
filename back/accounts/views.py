@@ -17,6 +17,16 @@ def user(request):
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
+# 로그인된 유저 정보 조회(id로 불러오기)
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def user_profile(request, user_pk):
+  if request.method == 'GET':
+    review = User.objects.get(pk=user_pk)
+    serializer = UserSerializer(review)
+    return Response(serializer.data)
+
+
 # 로그인된 유저 정보 조회
 @api_view(['GET',])
 @permission_classes([IsAuthenticated])

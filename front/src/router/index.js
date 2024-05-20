@@ -6,12 +6,17 @@ import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 import CommunityView from '@/views/CommunityView.vue'
 import ReviewDetailView from '@/views/ReviewDetailView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 
 import RelatedMovie from '@/components/RelatedMovie.vue'
 import ReviewList from '@/components/ReviewList.vue'
 import Genre from '@/components/Genre.vue'
 
 import ReviewCreate from '@/components/ReviewCreate.vue'
+
+import Comment from '@/components/Comment.vue'
+
+import { useCommunityStore } from '@/stores/community'
 
 // 라우터 네임 확인하고 사용하기!!
 const router = createRouter({
@@ -63,9 +68,16 @@ const router = createRouter({
     {
       path: '/community/:reviewId',
       name: 'reviewDetail',
-      component: ReviewDetailView
+      component: ReviewDetailView,
+      children:[
+        {path:'comment', name:'comment', component:Comment}
+      ]
     },
-
+    {
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView
+    }
   ]
 })
 

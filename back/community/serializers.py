@@ -13,7 +13,7 @@ class ReviewListSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = '__all__'
+        # fields = '__all__'
         fields = ('title', 'movie_title', 'rank', 'content', 'user',)
         read_only_fielsds = ('user',)
 
@@ -23,15 +23,18 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
 
+# 리뷰 <- 댓글 조회
 class CommentListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
 
+# 리뷰 <- 댓글 작성
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('review', 'user', 'content',)
+        read_only_fielsds = ('user','review')
 
 # class ReviewSerializer(serializers.ModelSerializer):    
 #     class Meta:

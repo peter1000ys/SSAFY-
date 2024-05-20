@@ -8,6 +8,7 @@ export const useUserStore = defineStore("user", () => {
     const loginUsername = ref(null)
     // 로그인 된 유저 id 변수
     const userId = ref(null)
+    const user = ref({})
 
     // 로그인(토큰) 여부 확인 변수
     const isLogin = computed(() => {
@@ -73,7 +74,21 @@ export const useUserStore = defineStore("user", () => {
       });
     };
 
-    return { token, signup, login, logout, isLogin, loginUsername, userId };
+    const profile = function () {
+      axios({
+        method: "get",
+        url: `http://127.0.0.1:8000/api/v1_2/${userId.value}/`,
+        headers: {
+          Authorization: `Token ${token.value}`
+        }
+        })
+        .then((response) => {
+          console.log(response)
+          user.value = response.data
+        })
+    }
+
+    return { token, signup, login, logout, isLogin, loginUsername, userId, user, profile };
   },
   { persist: true }
 );
