@@ -3,14 +3,15 @@
   <div>
     <h1>ReviewCreate</h1>
     <form @submit.prevent="createReview">
-      <div>
-        <label for="title">title : </label>
-        <input type="text" id="title" name="title" v-model="title">
-      </div>
 
       <div>
         <label for="movie_title">Movie title : </label>
         <input type="text" id="movie_title" name="movie_title" v-model="movie_title">
+      </div>
+
+      <div>
+        <label for="title">title : </label>
+        <input type="text" id="title" name="title" v-model="title">
       </div>
 
       <div>
@@ -32,6 +33,7 @@
   import { ref } from 'vue'
   import { useCommunityStore } from '@/stores/community'
   import { useUserStore } from '@/stores/user'
+  // import axios from 'axios';
 
   // community 스토어
   const store = useCommunityStore()
@@ -43,6 +45,10 @@
   const movie_title = ref(null)
   const rank = ref(null)
   const content = ref(null)
+
+  // 검색 변수
+  // const query = ref('');
+  // const movies = ref([]);
 
   const createReview = function() {
     const data = {
