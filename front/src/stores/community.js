@@ -29,7 +29,7 @@ export const useCommunityStore = defineStore("community",() => {
 
     // 리뷰 작성
     const createReview = function (data) {
-      const { title, movie_title, content, rank, user } = data
+      const { title, movie_title, content, rank, user, poster_path } = data
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/api/v1_1/reviews/",
@@ -38,7 +38,8 @@ export const useCommunityStore = defineStore("community",() => {
           movie_title,
           rank,
           content,
-          user
+          user,
+          poster_path
         },
         headers: {
           Authorization: `Token ${store.token}`

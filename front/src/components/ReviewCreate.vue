@@ -7,7 +7,7 @@
         <label for="movie_title_search">Movie title search</label>
         <input v-model="query" @input="searchMovies" placeholder="Search for a movie" id="movie_title_search" name="movie_title_search"/>
         <ul v-if="movies.length">
-          <li v-for="movie in movies" :key="movie.id" class="search-result__card" @click="selectMovie(movie.title)">
+          <li v-for="movie in movies" :key="movie.id" class="search-result__card" @click="selectMovie(movie.title, movie.poster_path)">
             <img class="img" :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="...">
             {{ movie.title }}
           </li>
@@ -59,8 +59,9 @@
   // 리뷰 작성 필드 정보
   const title = ref(null)
   const movie_title = ref(null)
-  const rank = ref(null)
+  const rank = ref(0)
   const content = ref(null)
+  const poster_path = ref(null)
 
   // 검색 변수
   const query = ref('')
@@ -88,9 +89,11 @@
   }
 
   // 영화 선택
-  const selectMovie = (title) => {
+  const selectMovie = (title, path) => {
     movie_title.value = title
     query.value = title
+    poster_path.value = path
+
     searchMovies()
   }
 
@@ -102,7 +105,8 @@
       content: content.value,
       rank: rank.value,
       // user 정보는 스토어에 저장된 로그인된 유저의 id 활용
-      user: userStore.userId
+      user: userStore.userId,
+      poster_path: poster_path.value
     }
     console.log(data)
     store.createReview(data)

@@ -3,11 +3,13 @@
   <div>
     <h1>ReviewDetailView</h1>
     <div>
+      <img class="img" :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`" alt="...">
       <p>번호 : {{ review.id }}</p>
       <p>영화 제목 : {{ review.movie_title }}</p>
       <p>리뷰 제목 : {{ review.title }}</p>
       <p>리뷰 내용 : {{ review.content }}</p>
       <p>작성자 : {{ review.user }}</p>
+      <p>평점 : {{ review.rank }} 점</p>
         <button @click="reviewLike()">{{reviewLiked? '좋아요 취소':'좋아요'}}</button>
         <button @click="reviewHate()">{{reviewHated? '싫어요 취소':'싫어요'}}</button>
         <p>좋아요 수 : {{reviewLikeCount}}</p>
@@ -136,5 +138,7 @@
 </script>
 
 <style scoped>
-
+  .img{
+    width: 100px;
+  }
 </style>

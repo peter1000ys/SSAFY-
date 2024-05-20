@@ -6,6 +6,7 @@
       <h3> 닉네임 : {{ user.username}}</h3>
       <div v-for="review in reviews">
         <!-- {{ review }} -->
+        <img class="img" :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`" alt="...">
         <p @click.prevent="goDetail(review.id)" >영화 : {{ review.movie_title }} / 리뷰 : {{ review.content }}</p>
       </div>
     </div>
@@ -90,6 +91,9 @@
 </script>
 
 <style scoped>
+.img {
+  width: 100px;
+}
 .movie-card-container {
   display: flex;
   flex-wrap: wrap;
