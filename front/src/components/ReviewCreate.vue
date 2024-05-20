@@ -4,7 +4,6 @@
     <h1>ReviewCreate</h1>
     <form @submit.prevent="createReview">
       <div>
-        <h1>영화 검색</h1>
         <label for="movie_title_search">Movie title search</label>
         <input v-model="query" @input="searchMovies" placeholder="Search for a movie" id="movie_title_search" name="movie_title_search"/>
         <ul v-if="movies.length">
@@ -30,9 +29,14 @@
         <textarea name="content" id="content" cols="30" rows="10" v-model="content"></textarea>
       </div>
 
-      <div>
+      <!-- <div>
         <label for="rank">Rank</label>
         <input type="number" id="rank" name="rank" min="1" max="5" v-model="rank">
+      </div> -->
+
+      <div>
+        <label for="rank">Rank:</label>
+        <StarRating v-model="rank" />
       </div>
 
       <button type="submit">create</button>
@@ -45,6 +49,7 @@
   import { useCommunityStore } from '@/stores/community'
   import { useUserStore } from '@/stores/user'
   import axios from 'axios'
+  import StarRating from '@/components/StarRating.vue'
 
   // community 스토어
   const store = useCommunityStore()
@@ -103,7 +108,7 @@
     store.createReview(data)
     title.value=""
     movie_title.value=""
-    rank.value=""
+    rank.value=0
     content.value=""
     query.value = ""
   }
