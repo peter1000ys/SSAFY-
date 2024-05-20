@@ -34,7 +34,6 @@
     if (iframe) {
       iframe.src = ''
     }
-    store.movieVideoKey = null
     router.push({ name: 'detail', params: { movieId: movieId } })
   }
   
@@ -45,7 +44,7 @@
       if (iframe) {
         iframe.src = ''
       }
-      store.movieVideoKey = null
+
     })
   })
   </script>

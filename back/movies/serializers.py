@@ -2,7 +2,14 @@ from rest_framework import serializers
 from .models import Movie, Genre
 from accounts.models import User
 
+class MovieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        exclude = ('tmdb_id', )
+
+
 class GenreListSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Genre
         fields = '__all__'
@@ -17,16 +24,11 @@ class MovieListSerializer(serializers.ModelSerializer):
         model = Movie
         fields = ('pk', 'title', 'overview','release_date','poster_path','vote_count','vote_average', 'user')
 
-class MovieSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Movie
-        fields = '__all__'
 
 
 class MovieReadSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Movie
-        fields = ('tmdb_id', 'title', 'overview','release_date','poster_path','vote_count','vote_average','backdrop_path', 'adult', 'genres', 'popularity')
+        fields = ('tmdb_id', 'title', 'overview','release_date','poster_path','vote_count','vote_average','backdrop_path', 'adult', 'genres', 'popularity', 'original_language')
         # fields = '__all__'

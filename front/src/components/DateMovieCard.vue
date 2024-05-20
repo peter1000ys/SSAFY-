@@ -5,13 +5,6 @@
     <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
     <div class="overlay">
       <h1 class="heading">{{ movie.title }}</h1>
-      <div class="data">
-        <!-- <span class="date">{{movie.release_date}}</span> -->
-        <!-- <span class="user-id">{{ movie.overview }}</span> -->
-      </div>
-      <!-- <p class="texts">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      </p> -->
     </div>
   </div>
   </div>

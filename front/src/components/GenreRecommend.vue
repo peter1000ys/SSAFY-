@@ -1,22 +1,30 @@
 
 <template>
   <div>
-    <h1>related</h1>
+    <h1>Genre : {{ genreName }}</h1>
     <div class="movie-card-container">
-      <div v-for="movie in store.similarMovies" :key="movie.id">
-              <RelatedMovieCard :movie="movie" />
-      </div>
+      <div v-for="movie in store.filteredMovies" :key="movie.id">
+              <GenreMovieCard :movie="movie" />
+            </div>
 
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import GenreMovieCard from '@/components/GenreMovieCard.vue';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useMovieStore } from '@/stores/movie';
-import RelatedMovieCard from './RelatedMovieCard.vue';
-
+const props = defineProps({
+  genre:Object
+})
+console.log(props.genre.tmdb_id)
+const route = useRoute()
+const GenreId = ref(props.genre.tmdb_id)
 const store = useMovieStore()
+const genreName = ref('');
+
 
 
 </script>

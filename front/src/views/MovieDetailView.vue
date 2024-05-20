@@ -6,7 +6,7 @@
     <div class="movie-detail-child">
       <p><strong>개봉일:</strong> {{ store.movie.release_date }}</p>
       <p><strong>러닝타임:</strong> {{ store.movie.runtime }}</p>
-      <p><strong>TMDB 평점:</strong> {{ store.movie.vote_average }}</p>
+      <p><strong>평점:</strong> {{ store.movie.vote_average }}</p>
     </div>
     <div class="movie-detail-child">
       <h3>장르</h3>
@@ -91,20 +91,27 @@
        style="font-size: 5rem; color: #d03939; cursor: pointer;"></i>
     </div>
   </div>
-
+  <div>
+    <nav>
+      <RouterLink :to="{name: 'related'}" @click="getSimilar(store.movie.id)">비슷한 콘텐츠</RouterLink>
+    </nav>
+    <RouterView />
+  </div>
 </template>
 
 <script setup>
 import axios from 'axios'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
+import { RouterLink, RouterView } from 'vue-router'
 import YoutubeTrailerModal from '@/components/YoutubeTrailerModal.vue'
 const userStore = useUserStore()
 const store = useMovieStore()
 const router = useRouter()
+const route = useRoute()
 const likeMovie = (movieId) => {
   store.likeMovie(movieId)
     }
@@ -120,13 +127,24 @@ const loginAlert = () => {
   window.alert('로그인이 필요합니다!')
   router.push({name: 'login'})
 }
-onMounted(() => {
-  const route = useRoute()
-  const movieId = route.params.movieId
-
+const getSimilar = (movieId) => {
+  console.log(movieId)
+  store.getSimilar(movieId)
+}
+const fetchMovieDetails = (movieId) => {
   store.movieDetail(movieId)
+}
 
+onMounted(() => {
+  fetchMovieDetails(route.params.movieId)
 })
+
+watch(
+  () => route.params.movieId,
+  (newMovieId) => {
+    fetchMovieDetails(newMovieId)
+  }
+)
 
 </script>
 

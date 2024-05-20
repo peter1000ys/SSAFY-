@@ -31,12 +31,11 @@ const router = createRouter({
       path: '/movies/',
       name: 'list',
       component: MovieListView,
-      children: [
-        {
-          path:'/genre/:genreId/',
-          name:'genre',
-          component: Genre,
-        }]
+    },
+    {
+      path: '/genre/:genreId/',
+      name: 'genre',
+      component: Genre,
     },
     {
       path: '/:movieId',
