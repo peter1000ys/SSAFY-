@@ -47,10 +47,10 @@ export const useCommunityStore = defineStore("community",() => {
       }).then((response) => {
         console.log(response)
         console.log("작성 완료")
+        getReviews()
       })
         .catch((error) => {
           console.log(error)
-          getReviews()
         })
       router.push({name:"home"})
     };

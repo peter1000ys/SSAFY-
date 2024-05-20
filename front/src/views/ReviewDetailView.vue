@@ -9,7 +9,6 @@
       <p>리뷰 내용 : {{ review.content }}</p>
       <!-- <p>작성 시간 : {{ review.created_at.substr(0, 10) }} {{ review.created_at.substr(11, 8) }}</p> -->
       <p>작성자 : {{ review.user }}</p>
-      <hr>
         <button @click="reviewLike()">{{reviewLiked? '좋아요 취소':'좋아요'}}</button>
         <button @click="reviewHate()">{{reviewHated? '싫어요 취소':'싫어요'}}</button>
         <p>좋아요 수 : {{reviewLikeCount}}</p>
@@ -17,9 +16,14 @@
       <hr>
     </div>
     <h3>Comment List</h3>
-    <div v-for="comment in comments" :key="comment.id">
+    <CommentList v-for="comment in comments" :key="comment.id" :comment="comment"/>
+    <!-- <div v-for="comment in comments" :key="comment.id" :comment="commnet">
       <p>{{comment.id}}번 | {{comment.content }} | {{ comment.user }}번 유저 | {{ comment.review }}번 리뷰 </p>
-    </div>
+        <button @click="commentLike(comment.id)">{{commentLiked? '좋아요 취소':'좋아요'}}</button>
+        <button @click="commentHate(comment.id)">{{commentHated? '싫어요 취소':'싫어요'}}</button>
+        <p>좋아요 수 : {{commentLikeCount}}</p>
+        <p>싫어요 수 : {{commentHateCount}}</p>
+    </div> -->
     
     <div>
     <hr>
@@ -50,7 +54,6 @@
   const reviewHated = ref(false)
   const reviewLikeCount = ref(0)
   const reviewHateCount = ref(0)
-
 
   // 리뷰 상세 정보 요청
   onMounted(() => {
@@ -115,7 +118,7 @@
         console.log(response)
         reviewLiked.value = response.data.liked
         reviewLikeCount.value = response.data.count
-        console.log("리뷰 추천 완료")
+        console.log("리뷰 좋아요 완료")
       })
         .catch((error) => {
           console.log(error)
