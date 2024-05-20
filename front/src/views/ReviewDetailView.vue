@@ -71,24 +71,39 @@
     })
   })
 
-  // const reviewLike = function() {
-  //   const data = {
-  //     review: reviewId.value,
-  //     user: store.userId
-  //   }
-  //   console.log(data)
-  //   communityStore.reviewLike(data)
-  // }
-
-  // const reviewHate = function() {
-    // const data = {
-    //   review: reviewId.value,
-    //   user: store.userId
-    // }
-  //   console.log(data)
-  //   communityStore.reviewHate(data)
-  // }
-
+  onMounted(() => {
+    axios({
+        method: "get",
+        url: `http://127.0.0.1:8000/api/v1_1/${reviewId.value}/like/${store.userId}/`,
+        headers: {
+          Authorization: `Token ${store.token}`
+        }
+      }).then((response) => {
+        console.log(response)
+        reviewLiked.value = response.data.liked
+        reviewLikeCount.value = response.data.count
+        console.log("리뷰 좋아요 조회 완료")
+      })
+        .catch((error) => {
+          console.log(error)
+      })
+      axios({
+        method: "get",
+        url: `http://127.0.0.1:8000/api/v1_1/${reviewId.value}/hate/${store.userId}/`,
+        headers: {
+          Authorization: `Token ${store.token}`
+        }
+      }).then((response) => {
+        console.log(response)
+        reviewHated.value = response.data.hated
+        reviewHateCount.value = response.data.count
+        console.log("리뷰 싫어요 조회 완료")
+      })
+        .catch((error) => {
+          console.log(error)
+      })
+  })
+  
   const reviewLike = function () {
       axios({
         method: "post",

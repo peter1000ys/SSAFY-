@@ -13,7 +13,7 @@ class ReviewListSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = '__all__'
+        # fields = '__all__'
         fields = ('title', 'movie_title', 'rank', 'content', 'user',)
         read_only_fielsds = ('user',)
 
