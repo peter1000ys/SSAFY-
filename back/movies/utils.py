@@ -1,8 +1,8 @@
 import requests
 import json
-
 from .models import Movie, Genre
 from .serializers import MovieReadSerializer
+
 token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5OTZjYzI3NTQ1MmIyOGE2NWQ1NmZkZTA5Njk0MWM4NCIsInN1YiI6IjY2M2Q4Y2UwMGYyYzdjMTlhNmM3NWI1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2XhNWrsPvokdXhVEWX5ZHBctmKl7y5WckUfnppu6nIE"
 
 def fetch_and_save_genres():
@@ -18,12 +18,11 @@ def fetch_and_save_genres():
 
     for results in response['genres']:
         Genre.objects.create(
-            tmdb_id= results['id'],
-            name= results['name'],
+            tmdb_id=results['id'],
+            name=results['name'],
         )
 
 def fetch_and_save_movies():
-
     for i in range(1, 101):
         url = f"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=ko-KR&page={i}&sort_by=popularity.desc"
 
@@ -39,9 +38,13 @@ def fetch_and_save_movies():
                 movie_genre = movie_data['genre_ids']
                 movie_rd = movie_data['release_date']
                 if not movie_data['genre_ids']:
-                    movie_genre = [777]
+                    continue
                 if movie_data['release_date'] == "":
                     movie_rd = None
+                elif int(movie_data['release_date'][:4]) <= 1980:
+                    continue
+                if movie_data['overview'] == "":
+                    continue
                 if Movie.objects.filter(pk=movie_data['id']):
                     continue
                 movie_dict = {
@@ -53,9 +56,10 @@ def fetch_and_save_movies():
                     'vote_count':  movie_data['vote_count'],
                     'vote_average':  movie_data['vote_average'],
                     'popularity': movie_data['popularity'],
-                    'backdrop_path':movie_data['backdrop_path'],
-                    'adult':movie_data['adult'],
-                    'genres':movie_genre,
+                    'backdrop_path': movie_data['backdrop_path'],
+                    'adult': movie_data['adult'],
+                    'genres': movie_genre,
+                    'original_language': movie_data['original_language'],
                 }
                 serializer = MovieReadSerializer(data=movie_dict)
                 if serializer.is_valid():
@@ -65,4 +69,26 @@ def fetch_and_save_movies():
         else:
             print('Failed to fetch data')
 
+def get_movie_videos(movie_id):
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}/videos"
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"Bearer {token}"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json().get('results', [])
+    else:
+        return []
+
+def delete_movies_without_trailers():
+    movies = Movie.objects.all()
+    for movie in movies:
+        movie_id = movie.tmdb_id
+        videos = get_movie_videos(movie_id)
+        if not any(video['type'] == "Trailer" for video in videos):
+            movie.delete()
+            print(f"Deleted movie with ID: {movie_id} - {movie.title}")
+# dumpdata 인코딩 문제 발생 시
+# PYTHONIOENCODING=utf-8 python manage.py dumpdata --indent 4 movies.Movie > movies.json
 

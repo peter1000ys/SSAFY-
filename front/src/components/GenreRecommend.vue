@@ -1,22 +1,22 @@
 
 <template>
   <div>
-    <h1>related</h1>
+
     <div class="movie-card-container">
-      <div v-for="movie in store.similarMovies" :key="movie.id">
-              <RelatedMovieCard :movie="movie" />
-      </div>
+      <div v-for="movie in movies['movies']" :key="movie.pk">
+              <GenreMovieCard :movie="movie" />
+            </div>
 
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { useMovieStore } from '@/stores/movie';
-import RelatedMovieCard from './RelatedMovieCard.vue';
-
-const store = useMovieStore()
+import GenreMovieCard from '@/components/GenreMovieCard.vue';
+const props = defineProps({
+  movies:Object
+})
+console.log(props.movies)
 
 
 </script>

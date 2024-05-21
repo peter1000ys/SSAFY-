@@ -2,14 +2,15 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import MovieListSerializer, MovieSerializer, GenreListSerializer
+from .serializers import MovieListSerializer, MovieSerializer, GenreListSerializer,GenreMoviesSerializer
 from .models import Movie,Genre
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.views import APIView
 from rest_framework import status
-from .utils import fetch_and_save_movies, fetch_and_save_genres
+from .utils import fetch_and_save_movies, fetch_and_save_genres, delete_movies_without_trailers
 from accounts.models import User
 from datetime import datetime
+import random
 # Create your views here.
 @api_view(['GET', 'POST'])
 # @permission_classes([IsAuthenticated])
@@ -46,7 +47,7 @@ def filter_genre(request, genre_pk):
         movies = get_list_or_404(Movie.objects.order_by('-popularity'), genres = genre_pk)
         serializers = MovieListSerializer(movies, many=True)
         return Response(serializers.data)
-
+    
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -164,6 +165,74 @@ def today_recommend(request):
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
+# 한국 영화 추천 : 최신 인기작
+@api_view(['GET'])
+def korean_movies(request):
+    movies = get_list_or_404(Movie.objects.order_by('-popularity'), original_language = 'ko')
+    movies = sorted(movies, key=lambda x: x.release_date, reverse=True)[:15]
+    serializers = MovieListSerializer(movies, many=True)
+    return Response(serializers.data)
+
+# 이번 주 추천 작품
+@api_view(['GET'])
+def week_recommend(request):
+    movies = get_list_or_404(Movie.objects.order_by('-popularity')[:200])
+    movies = random.sample(movies, 10)
+    serializers = MovieListSerializer(movies, many=True)
+    return Response(serializers.data)
+
+
+@api_view(['GET'])
+def similar_movies(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    genres = movie.genres.all()
+    movies = get_list_or_404(Movie.objects.filter(genres__in=genres)[:24])
+    serializers = MovieListSerializer(movies, many=True)
+    return Response(serializers.data)
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def liked_genres(request, user_pk):
+#     user = get_object_or_404(User, pk=user_pk)
+#     movies = user.like_movies.all()
+#     genres = []
+#     for movieId in movies:
+#         movie = get_object_or_404(Movie, title=movieId)
+#         genres.extend(movie.genres.all())
+#     genres = list(set(genres))
+#     serializer = GenreListSerializer(genres, many=True)
+#     return Response(serializer.data)
+    
+# @api_view(['GET'])
+# def filter_genre_rec(request, genre_pk):
+#     if request.method == 'GET':
+#         movies = get_list_or_404(Movie.objects.order_by('-popularity'), genres = genre_pk)[:15]
+#         serializers = MovieListSerializer(movies, many=True)
+#         return Response(serializers.data)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def liked_genres_with_movies(request, user_pk):
+    user = get_object_or_404(User, pk=user_pk)
+    liked_movies = user.like_movies.all()
+    genres_dict = {}
+
+    # Get genres from liked movies
+    for movie in liked_movies:
+        for genre in movie.genres.all():
+            if genre not in genres_dict:
+                genres_dict[genre] = []
+    
+    # Get all movies and filter by genres
+    for genre in genres_dict:
+        genre_movies = Movie.objects.filter(genres=genre).order_by('-popularity')[:15]
+        genres_dict[genre] = genre_movies
+    
+    # Serialize the data
+    data = {genre.name: GenreMoviesSerializer({'genre': genre, 'movies': movies}).data for genre, movies in genres_dict.items()}
+    return Response(data)
+
+
+
 
 # TMDB에서 장르 가져오기 위한 view함수
 class FetchGenresAPIView(APIView):
@@ -180,11 +249,20 @@ class FetchMoviesAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             fetch_and_save_movies()
+            delete_movies_without_trailers()
             return Response({'status': 'success'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+<<<<<<< back/movies/views.py
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def my_favorite(request, user_pk):
+    if request.method == 'GET':
+        movies = Movie.objects.filter(favorite_users=user_pk)
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data)
 
 # 프로필 찜한 영화 가져오기
 # serializer 는 있는거 사용!
@@ -195,6 +273,7 @@ def profile_favorite(request, user_pk):
         movies = Movie.objects.filter(favorite_users=user_pk)
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data)
+
 
 @api_view(['GET',])
 @permission_classes([IsAuthenticated])

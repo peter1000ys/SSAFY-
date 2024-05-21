@@ -1,8 +1,8 @@
 
 <template>
   <div class="movie-card-container">
-            <div v-for="movie in store.weekMovies" :key="movie.id">
-              <WeekMovieCard :movie="movie"/>
+            <div v-for="movie in store.koMovies" :key="movie.id">
+              <KoreaMovieCard :movie="movie" />
             </div>
           </div>
   </template>
@@ -10,13 +10,13 @@
   <script setup>
   import { onMounted, ref } from 'vue';
   import { useRecommendStore } from '@/stores/recommend';
-  import WeekMovieCard from '@/components/WeekMovieCard.vue'
+  import KoreaMovieCard from './KoreaMovieCard.vue';
   
   const store = useRecommendStore()
   
     onMounted(() => {
-      store.getWeekMovies()
-      console.log(store.weekMovies)
+      store.getKoreanMovies()
+      console.log(store.koMoives)
     })
   
   </script>

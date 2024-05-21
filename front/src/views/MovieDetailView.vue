@@ -1,12 +1,12 @@
 <template>
-  <YoutubeTrailerModal />
+  
   <div class="movie-detail-container">
     <img :src="`https://image.tmdb.org/t/p/w500${store.movie.poster_path}`" alt="">
     <h3>{{ store.movie.title }}</h3>
     <div class="movie-detail-child">
       <p><strong>개봉일:</strong> {{ store.movie.release_date }}</p>
       <p><strong>러닝타임:</strong> {{ store.movie.runtime }}</p>
-      <p><strong>TMDB 평점:</strong> {{ store.movie.vote_average }}</p>
+      <p><strong>평점:</strong> {{ store.movie.vote_average }}</p>
     </div>
     <div class="movie-detail-child">
       <h3>장르</h3>
@@ -83,28 +83,31 @@
       </div>
       <i class="bi bi-plus"  @click="loginAlert" style="font-size: 2rem; cursor: pointer;"></i>
     </div>
-    <div class="movie-detail-child">
-      <h3>공식 예고편</h3>
-      <i class="bi bi-youtube" 
-       data-bs-toggle="modal" 
-       data-bs-target="#exampleModal"
-       style="font-size: 5rem; color: #d03939; cursor: pointer;"></i>
-    </div>
   </div>
-
+  <iframe id="player" type="text/html" width="1200" height="800"
+              :src="`http://www.youtube.com/embed/${store.movieVideoKey}?autoplay=1&mute=1`"
+              frameborder="0"></iframe>
+  <div>
+    <nav>
+      <RouterLink :to="{name: 'related'}" @click="getSimilar(store.movie.id)">비슷한 콘텐츠</RouterLink>
+    </nav>
+    <RouterView />
+  </div>
 </template>
 
 <script setup>
 import axios from 'axios'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
-import YoutubeTrailerModal from '@/components/YoutubeTrailerModal.vue'
+import { RouterLink, RouterView } from 'vue-router'
+
 const userStore = useUserStore()
 const store = useMovieStore()
 const router = useRouter()
+const route = useRoute()
 const likeMovie = (movieId) => {
   store.likeMovie(movieId)
     }
@@ -120,19 +123,28 @@ const loginAlert = () => {
   window.alert('로그인이 필요합니다!')
   router.push({name: 'login'})
 }
-onMounted(() => {
-  const route = useRoute()
-  const movieId = route.params.movieId
-
+const getSimilar = (movieId) => {
+  console.log(movieId)
+  store.getSimilar(movieId)
+}
+const fetchMovieDetails = (movieId) => {
   store.movieDetail(movieId)
+}
 
+onMounted(() => {
+  fetchMovieDetails(route.params.movieId)
 })
+
+watch(
+  () => route.params.movieId,
+  (newMovieId) => {
+    fetchMovieDetails(newMovieId)
+  }
+)
 
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;800&display=swap");
-
 .movie-detail-container {
   display: flex;
   flex-direction: column;

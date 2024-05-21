@@ -1,7 +1,7 @@
 
 <template>
-  <div>
-    <div id="box" @click="MovieDetail(movie.pk)">
+  <div  @click="MovieDetail(movie.pk)">
+    <div id="box">
     <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
     <div class="overlay">
       <h1 class="heading">{{ movie.title }}</h1>
