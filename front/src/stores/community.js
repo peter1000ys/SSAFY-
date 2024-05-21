@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
 import { useUserStore } from '@/stores/user'
 
@@ -22,14 +22,15 @@ export const useCommunityStore = defineStore("community",() => {
           Authorization: `Token ${store.token}`
         }
       }).then((response) => {
-        console.log(response);
+        console.log(response)
+        console.log("리뷰 조회 완료")
         reviews.value = response.data
       });
     };
 
     // 리뷰 작성
     const createReview = function (data) {
-      const { title, movie_title, content, rank, user, poster_path } = data
+      const { title, movie_title, content, rank, user, poster_path, username } = data
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/api/v1_1/reviews/",
@@ -39,14 +40,15 @@ export const useCommunityStore = defineStore("community",() => {
           rank,
           content,
           user,
-          poster_path
+          poster_path,
+          username
         },
         headers: {
           Authorization: `Token ${store.token}`
         }
       }).then((response) => {
         console.log(response)
-        console.log("작성 완료")
+        console.log("리뷰 작성 완료")
         getReviews()
       })
         .catch((error) => {
@@ -63,7 +65,8 @@ export const useCommunityStore = defineStore("community",() => {
           Authorization: `Token ${store.token}`
         }
       }).then((response) => {
-        console.log(response);
+        console.log(response)
+        console.log("댓글 조회 완료")
         comments.value = response.data
       });
     };
@@ -71,9 +74,6 @@ export const useCommunityStore = defineStore("community",() => {
     // 리뷰<-댓글 생성
     const createComment = function (data) {
       const { content, user, review } = data
-      console.log(content)
-      console.log(user)
-      console.log(review)
       axios({
         method: "post",
         url:`http://127.0.0.1:8000/api/v1_1/${review}/comment/`,
@@ -85,7 +85,7 @@ export const useCommunityStore = defineStore("community",() => {
         }
       }).then((response) => {
         console.log(response)
-        console.log("코멘트 작성 완료")
+        console.log("댓글 작성 완료")
         getComments(review)
 
       })
@@ -107,7 +107,7 @@ export const useCommunityStore = defineStore("community",() => {
         console.log(response)
         reviewLiked.value = response.data.liked
         reviewLikeCount.value = response.data.count
-        console.log("리뷰 추천 완료")
+        console.log("리뷰 좋아요 완료")
       })
         .catch((error) => {
           console.log(error)
@@ -134,7 +134,35 @@ export const useCommunityStore = defineStore("community",() => {
       })
     }
 
-    return { reviews, comments, getReviews, createReview, getComments, createComment, reviewLiked, reviewHated, reviewLikeCount, reviewHateCount, reviewLike, reviewHate };
+    const getMovieReview = function (movieTitle) {
+      axios({
+        method: "get",
+        url: `http://127.0.0.1:8000/api/v1_1/reviews/${movieTitle}`,
+        headers: {
+          Authorization: `Token ${store.token}`
+        }
+      }).then((response) => {
+        console.log(response);
+        console.log("영화 댓글 조회 완료")
+        reviews.value = response.data
+        reviews.value.sort((a, b) => b.like_users.length - a.like_users.length)
+      })
+    }
+
+    return { 
+      reviews,
+      comments,
+      getReviews,
+      createReview,
+      getComments,
+      createComment,
+      reviewLiked,
+      reviewHated,
+      reviewLikeCount,
+      reviewHateCount,
+      reviewLike,
+      reviewHate,
+      getMovieReview };
   },
   { persist: true }
-);
+)

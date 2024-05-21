@@ -179,3 +179,14 @@ def user_review(request, user_pk):
         reviews = Review.objects.filter(user=user_pk)
         serializer = ReviewDetailSerializer(reviews, many=True)
         return Response(serializer.data)
+
+# 영화의 리뷰 찾기(영화 타이틀로 찾기)
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def movie_review(request, movie_title):
+    if request.method == 'GET':
+        reviews = Review.objects.filter(movie_title=movie_title)
+        # reviews = Review.objects.filter(movie_title=movie_title).order_by('-like_users[0]')
+        # reviews = Review.objects.order_by('-like_users[0]', movie_title=movie_title)
+        serializer = ReviewDetailSerializer(reviews, many=True)
+        return Response(serializer.data)

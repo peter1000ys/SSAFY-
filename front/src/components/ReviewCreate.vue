@@ -71,12 +71,9 @@
   const searchMovies = async () => {
   if (query.value.length >= 2) {
     try {
-      // const response = await axios.get('https://api.themoviedb.org/3/search/movie', {
       const response = await axios.get('http://127.0.0.1:8000/api/v1/search/', {
         params: {
-          // api_key: '958a2ba52a17b56a5320e5698bd1b258',
           query: query.value
-          // language: 'ko-KR'
         }
       })
       movies.value = response.data.results
@@ -106,9 +103,10 @@
       rank: rank.value,
       // user 정보는 스토어에 저장된 로그인된 유저의 id 활용
       user: userStore.userId,
-      poster_path: poster_path.value
+      poster_path: poster_path.value,
+      username: userStore.loginUsername
     }
-    console.log(data)
+    // console.log(data)
     store.createReview(data)
     title.value=""
     movie_title.value=""

@@ -8,7 +8,7 @@
       <p>영화 제목 : {{ review.movie_title }}</p>
       <p>리뷰 제목 : {{ review.title }}</p>
       <p>리뷰 내용 : {{ review.content }}</p>
-      <p>작성자 : {{ review.user }}</p>
+      <p>작성자 : {{ review.username }}</p>
       <p>평점 : {{ review.rank }} 점</p>
         <button @click="reviewLike()">{{reviewLiked? '좋아요 취소':'좋아요'}}</button>
         <button @click="reviewHate()">{{reviewHated? '싫어요 취소':'싫어요'}}</button>
@@ -56,12 +56,9 @@
         Authorization: `Token ${store.token}`
       }
     }).then((response) => {
-      // console.log(response);
       review.value = response.data
-      // console.log(review.value)
     }).then(() => {
       communityStore.getComments(reviewId.value)
-      // comments.value = communityStore.comments
       console.log("코멘트", comments.value)
     })
   })

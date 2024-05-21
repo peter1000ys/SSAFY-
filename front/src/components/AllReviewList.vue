@@ -13,17 +13,10 @@
 <script setup>
   import { useRouter } from 'vue-router'
 
-  // const props = defineProps({
-  //   reviews:Array
-  // })
-
   const props = defineProps({
     review:Object
   })
-  // console.log(props.review.id)
-
   const router = useRouter()
-
   const goDetail = function() {
     router.push({name:'reviewDetail', params:{reviewId:props.review.id}})
   }

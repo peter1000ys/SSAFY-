@@ -19,7 +19,8 @@ export const useUserStore = defineStore("user", () => {
         url: "http://127.0.0.1:8000/accounts/signup/",
         data,
       }).then((response) => {
-        console.log(response);
+        console.log(response)
+        console.log("회원 가입 완료")
       });
     };
 
@@ -32,7 +33,7 @@ export const useUserStore = defineStore("user", () => {
         loginUsername.value = username.value
         token.value = response.data.key
         console.log(token.value)
-        console.log(loginUsername.value)
+        // console.log(loginUsername.value)
         
         axios({
           method: "get",
@@ -43,9 +44,6 @@ export const useUserStore = defineStore("user", () => {
         })
         .then((response) => {
           userId.value = response.data.id
-    
-          console.log(userId.value)
-          
           const RecStore = useRecommendStore()
           RecStore.getLikedGenresWithMovies(userId.value)
           RecStore.userRecommend()
@@ -58,8 +56,8 @@ export const useUserStore = defineStore("user", () => {
         method: "post",
         url: "http://127.0.0.1:8000/accounts/logout/",
       }).then((response) => {
-        console.log(response);
-        console.log("로그아웃되었습니다.");
+        // console.log(response)
+        console.log("로그아웃되었습니다.")
         token.value = null
         userId.value = null
 
@@ -69,7 +67,7 @@ export const useUserStore = defineStore("user", () => {
       });
     };
 
-    // 프로필용 유정 정보 저장
+    // 프로필용 유저 정보 저장
     const profile = function () {
       axios({
         method: "get",
@@ -84,7 +82,16 @@ export const useUserStore = defineStore("user", () => {
       })
     }
 
-    return { token, signup, login, logout, isLogin, loginUsername, userId, user, profile };
+    return { 
+      token,
+      signup,
+      login,
+      logout,
+      isLogin,
+      loginUsername,
+      userId,
+      user,
+      profile };
   },
   { persist: true }
 );

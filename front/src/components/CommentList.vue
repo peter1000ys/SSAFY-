@@ -1,8 +1,7 @@
 <template>
   <div>
     <p>
-      {{ comment.id }}번 | {{ comment.content }} | {{ comment.user }}번 유저 |
-      {{ comment.review }}번 리뷰
+      댓글 내용 : {{ comment.content }}
     </p>
     <button @click="commentLike()">
       {{ commentLiked ? "좋아요 취소" : "좋아요" }}
@@ -23,13 +22,8 @@ import axios from "axios";
 
 const props = defineProps({
   comment: Object,
-});
-console.log(
-  "코멘트 정보",
-  props.comment.id,
-  props.comment.review,
-  props.comment.user
-);
+})
+
 const commentLiked = ref(false);
 const commentHated = ref(false);
 const commentLikeCount = ref(0);

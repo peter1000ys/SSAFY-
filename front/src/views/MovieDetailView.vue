@@ -92,7 +92,8 @@
     
   <div>
     <nav>
-      <RouterLink :to="{name: 'related'}" @click="getSimilar(store.movie.id)">비슷한 콘텐츠</RouterLink>
+      <RouterLink :to="{name: 'related'}" @click="getSimilar(store.movie.id)">비슷한 콘텐츠 | </RouterLink>
+      <RouterLink :to="{name: 'review'}" @click="getMovieReview(store.movie.title)">리뷰 목록</RouterLink>
     </nav>
     <RouterView />
   </div>
@@ -106,9 +107,11 @@ import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
 import { RouterLink, RouterView } from 'vue-router'
+import { useCommunityStore } from '@/stores/community'
 
 const userStore = useUserStore()
 const store = useMovieStore()
+const communityStroe = useCommunityStore()
 const router = useRouter()
 const route = useRoute()
 const likeMovie = (movieId) => {
@@ -129,6 +132,11 @@ const loginAlert = () => {
 const getSimilar = (movieId) => {
   console.log(movieId)
   store.getSimilar(movieId)
+}
+
+const getMovieReview = (movieTitle) => {
+  console.log(movieTitle)
+  communityStroe.getMovieReview(movieTitle)
 }
 const fetchMovieDetails = (movieId) => {
   store.movieDetail(movieId)
