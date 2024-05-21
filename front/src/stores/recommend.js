@@ -8,7 +8,7 @@ export const useRecommendStore = defineStore('recommend', () => {
   const koMovies = ref([])
   const weekMovies = ref([])
   const likedGenres = ref([])
-
+  const userRecommendMovies = ref([])
   const userStore = useUserStore()
 
   const getTodayRecommend = function() {
@@ -17,7 +17,7 @@ export const useRecommendStore = defineStore('recommend', () => {
       url: 'http://127.0.0.1:8000/api/v1/movies/recommend/weekday/'
     })
     .then((res) => {
-      console.log(res)
+
       weekday.value = res.data
     })
   }
@@ -28,7 +28,7 @@ export const useRecommendStore = defineStore('recommend', () => {
       url: 'http://127.0.0.1:8000/api/v1/movies/recommend/korea/'
     })
     .then((res) => {
-      console.log(res.data)
+
       koMovies.value = res.data
     })
   }
@@ -39,7 +39,7 @@ export const useRecommendStore = defineStore('recommend', () => {
       url: 'http://127.0.0.1:8000/api/v1/movies/recommend/week/'
     })
     .then((res) => {
-      console.log(res)
+
       weekMovies.value = res.data
     })
   }
@@ -53,13 +53,30 @@ export const useRecommendStore = defineStore('recommend', () => {
       }
     })
     .then((res) => {
-      console.log(res)
+
       likedGenres.value = res.data
     })
   }
 
   const clearLikedGenres = function() {
     likedGenres.value = []
+  }
+  const userRecommend = function() {
+    userRecommendMovies.value = []
+    axios({
+        method: "post",
+        url: `http://127.0.0.1:8000/api/v1/movies/${userStore.userId}/user_recommend/`,
+        headers: {
+          Authorization: `Token ${userStore.token}`
+        }
+      }).then((response) => {
+
+        userRecommendMovies.value = response.data
+        console.log("유저 맞춤 추천")
+      })
+        .catch((error) => {
+          console.log(error)
+      })
   }
 
   return {
@@ -71,6 +88,8 @@ export const useRecommendStore = defineStore('recommend', () => {
     getWeekMovies, 
     likedGenres, 
     getLikedGenresWithMovies, 
-    clearLikedGenres
+    clearLikedGenres,
+    userRecommendMovies,
+    userRecommend
   }
 }, { persist: true })

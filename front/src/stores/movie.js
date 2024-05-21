@@ -17,7 +17,7 @@ export const useMovieStore = defineStore('movie', () => {
   const liked = ref(false)
   const hated = ref(false)
   const similarMovies = ref([])
-
+  const favoriteMovies = ref([])
   const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5OTZjYzI3NTQ1MmIyOGE2NWQ1NmZkZTA5Njk0MWM4NCIsInN1YiI6IjY2M2Q4Y2UwMGYyYzdjMTlhNmM3NWI1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2XhNWrsPvokdXhVEWX5ZHBctmKl7y5WckUfnppu6nIE'
   const getGenres = function() {
     axios({
@@ -25,7 +25,7 @@ export const useMovieStore = defineStore('movie', () => {
       url: 'http://127.0.0.1:8000/api/v1/movies/genres'
     })
     .then((res) => {
-      console.log(res)
+
       genres.value = res.data
     })
   }
@@ -36,7 +36,7 @@ export const useMovieStore = defineStore('movie', () => {
       url: 'http://127.0.0.1:8000/api/v1/movies/'
     })
     .then((res) => {
-      console.log(res)
+
       movies.value = res.data
     })
   }
@@ -48,7 +48,7 @@ export const useMovieStore = defineStore('movie', () => {
       url: `http://127.0.0.1:8000/api/v1/filter-genre/${genreId}/`
     })
     .then((res) => {
-      console.log(res)
+
       filteredMovies.value = res.data
     })
   }
@@ -69,7 +69,7 @@ export const useMovieStore = defineStore('movie', () => {
     .request(options)
     .then(function (response) {
         movie.value = response.data
-        console.log(response.data)
+
         return movie.value.id
     })
     .then(function (movieId) {
@@ -85,7 +85,7 @@ export const useMovieStore = defineStore('movie', () => {
       })
       .then(function (response) {
           const videoObj = response.data.results.find((obj) => obj.type === "Trailer")
-          console.log(videoObj)
+
           movieVideoKey.value = videoObj.key
           console.log(movieVideoKey.value)
       })
@@ -131,7 +131,7 @@ export const useMovieStore = defineStore('movie', () => {
       }
     })
       .then((res) => {
-        console.log(res.data)
+
         hated.value = res.data.hated
         hatesCount.value = res.data.count
       })
@@ -161,9 +161,47 @@ export const useMovieStore = defineStore('movie', () => {
     })
     .then((res) => {
           similarMovies.value = res.data
-          console.log(res.data)
+
         })
   }
+  const myFavoriteMovie = function() {
+    axios({
+        method: "get",
+        url: `http://127.0.0.1:8000/api/v1/movies/${userStore.userId}/my_favorite/`,
+        headers: {
+          Authorization: `Token ${userStore.token}`
+        }
+      }).then((response) => {
 
-  return { genres, getGenres, movies, getMovies, filterMovie, filteredMovies, movieDetail, movie, movieVideoKey, liked, hated, favorited, likeMovie, hateMovie, favoriteMovie, read_lhf, likesCount, hatesCount, getSimilar, similarMovies}
+        favoriteMovies.value = response.data
+        console.log("프로필 찜한 영화 조회")
+      })
+        .catch((error) => {
+          console.log(error)
+      })
+  }
+  return {  
+    genres,
+    getGenres,
+    movies,
+    getMovies,
+    filterMovie,
+    filteredMovies,
+    movieDetail,
+    movie,
+    movieVideoKey,
+    liked,
+    hated,
+    favorited,
+    likeMovie,
+    hateMovie,
+    favoriteMovie,
+    read_lhf,
+    likesCount,
+    hatesCount,
+    getSimilar,
+    similarMovies,
+    myFavoriteMovie,
+    favoriteMovies
+  }
 }, { persist: true })

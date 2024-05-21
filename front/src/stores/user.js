@@ -2,7 +2,7 @@ import axios from "axios";
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { useRecommendStore } from "./recommend";
-
+import { useMovieStore } from "./movie";
 export const useUserStore = defineStore("user", () => {
     const token = ref(null)
     const loginUsername = ref(null)
@@ -43,10 +43,12 @@ export const useUserStore = defineStore("user", () => {
         })
         .then((response) => {
           userId.value = response.data.id
+    
           console.log(userId.value)
           
           const RecStore = useRecommendStore()
           RecStore.getLikedGenresWithMovies(userId.value)
+          RecStore.userRecommend()
         })
       })
     }
@@ -63,6 +65,7 @@ export const useUserStore = defineStore("user", () => {
 
         const RecStore = useRecommendStore()
         RecStore.clearLikedGenres()
+
       });
     };
 

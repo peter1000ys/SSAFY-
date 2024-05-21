@@ -18,7 +18,8 @@ import ReviewCreate from '@/components/ReviewCreate.vue'
 import Comment from '@/components/Comment.vue'
 
 import { useCommunityStore } from '@/stores/community'
-
+import { useMovieStore } from '@/stores/movie'
+import { useRecommendStore } from '@/stores/recommend'
 // 라우터 네임 확인하고 사용하기!!
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +27,15 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      // beforeEnter:(to, from) => {
+      //   const store = useMovieStore()
+      //   const recommendStore = useRecommendStore()
+      //   store.myFavoriteMovie()
+      //   recommendStore.userRecommend()
+      //   console.log("실행됨")
+
+      // }
     },
     {
       path: '/movies/',

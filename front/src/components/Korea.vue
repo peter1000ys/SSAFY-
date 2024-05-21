@@ -16,7 +16,6 @@
   
     onMounted(() => {
       store.getKoreanMovies()
-      console.log(store.koMoives)
     })
   
   </script>

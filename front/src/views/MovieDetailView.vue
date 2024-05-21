@@ -84,9 +84,12 @@
       <i class="bi bi-plus"  @click="loginAlert" style="font-size: 2rem; cursor: pointer;"></i>
     </div>
   </div>
-  <iframe id="player" type="text/html" width="1200" height="800"
-              :src="`http://www.youtube.com/embed/${store.movieVideoKey}?autoplay=1&mute=1`"
-              frameborder="0"></iframe>
+  <div v-if="store.movieVideoKey">
+    <iframe id="player" type="text/html" width="1200" height="800"
+    :src="`http://www.youtube.com/embed/${store.movieVideoKey}?autoplay=1&mute=1`"
+    frameborder="0"></iframe>
+  </div>
+    
   <div>
     <nav>
       <RouterLink :to="{name: 'related'}" @click="getSimilar(store.movie.id)">비슷한 콘텐츠</RouterLink>
@@ -98,8 +101,8 @@
 <script setup>
 import axios from 'axios'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import { ref, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
 import { RouterLink, RouterView } from 'vue-router'
@@ -112,11 +115,11 @@ const likeMovie = (movieId) => {
   store.likeMovie(movieId)
     }
 
-    const hateMovie = (movieId) => {
+const hateMovie = (movieId) => {
       store.hateMovie(movieId)
     }
 
-    const favoriteMovie = (movieId) => {
+const favoriteMovie = (movieId) => {
       store.favoriteMovie(movieId)
     }
 const loginAlert = () => {
@@ -131,16 +134,21 @@ const fetchMovieDetails = (movieId) => {
   store.movieDetail(movieId)
 }
 
-onMounted(() => {
-  fetchMovieDetails(route.params.movieId)
+store.read_lhf(route.params.movieId)
+
+fetchMovieDetails(route.params.movieId)
+
+onBeforeRouteLeave((to, from) => {
+  store.movieVideoKey = ''
+  store.movie = {}
 })
 
-watch(
-  () => route.params.movieId,
-  (newMovieId) => {
-    fetchMovieDetails(newMovieId)
-  }
-)
+// watch(
+//   () => route.params.movieId,
+//   (newMovieId) => {
+//     fetchMovieDetails(newMovieId)
+//   }
+// )
 
 </script>
 
