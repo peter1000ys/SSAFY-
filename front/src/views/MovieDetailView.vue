@@ -89,7 +89,7 @@
     :src="`http://www.youtube.com/embed/${store.movieVideoKey}?autoplay=1&mute=1`"
     frameborder="0"></iframe>
   </div>
-    
+    {{ store.movie.id }}
   <div>
     <nav>
       <RouterLink :to="{name: 'related'}" @click="getSimilar(store.movie.id)">비슷한 콘텐츠 | </RouterLink>
@@ -143,20 +143,16 @@ const fetchMovieDetails = (movieId) => {
 }
 
 store.read_lhf(route.params.movieId)
-
-fetchMovieDetails(route.params.movieId)
+onMounted(() => {
+  fetchMovieDetails(route.params.movieId)
+})
 
 onBeforeRouteLeave((to, from) => {
   store.movieVideoKey = ''
   store.movie = {}
+  store.similarMovies = []
 })
 
-// watch(
-//   () => route.params.movieId,
-//   (newMovieId) => {
-//     fetchMovieDetails(newMovieId)
-//   }
-// )
 
 </script>
 

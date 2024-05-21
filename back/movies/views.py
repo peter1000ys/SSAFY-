@@ -190,14 +190,14 @@ def week_recommend(request):
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
-# 비슷한 콘텐츠
-@api_view(['GET'])
-def similar_movies(request, movie_pk):
-    movie = get_object_or_404(Movie, pk=movie_pk)
-    genres = movie.genres.all()
-    movies = get_list_or_404(Movie.objects.filter(genres__in=genres)[:24])
-    serializers = MovieListSerializer(movies, many=True)
-    return Response(serializers.data)
+# # 비슷한 콘텐츠
+# @api_view(['GET'])
+# def similar_movies(request, movie_pk):
+#     movie = get_object_or_404(Movie, pk=movie_pk)
+#     genres = movie.genres.all()
+#     movies = get_list_or_404(Movie.objects.filter(genres__in=genres)[:24])
+#     serializers = MovieListSerializer(movies, many=True)
+#     return Response(serializers.data)
 
 # 좋아요 한 장르 별 영화 가져오기
 @api_view(['POST'])
