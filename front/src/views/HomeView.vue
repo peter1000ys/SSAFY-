@@ -1,9 +1,10 @@
 <template>
-  <div v-if="favoriteMovies">
+<div v-if="userStore.isLogin">
+  <div v-if="RecStore.userRecommendMovies.length">
     <div class="movie-card-container">
-        <h3>찜한 영화 목록</h3>
-        <div v-for="movie in favoriteMovies" :key="movie.id">
-          <div id="box" @click="MovieDetail(movie.tmdb_id)">
+        <h3 v-if="RecStore.userRecommendMovies">{{ userStore.loginUsername }} 님! 이런 영화는 어떠신가요?</h3>
+        <div v-for="movie in RecStore.userRecommendMovies" :key="movie.id">
+          <div id="box" @click="MovieDetail(movie.pk)">
             <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
             <div class="overlay">
               <h1 class="heading">{{ movie.title }}</h1>
@@ -12,6 +13,20 @@
         </div>
       </div>
     </div>
+    <div v-if="store.favoriteMovies.length">
+      <div class="movie-card-container">
+          <h3>찜한 영화 목록</h3>
+          <div v-for="movie in store.favoriteMovies" :key="movie.id">
+            <div id="box" @click="MovieDetail(movie.tmdb_id)">
+              <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
+              <div class="overlay">
+                <h1 class="heading">{{ movie.title }}</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
   
   <div>
     <h1>오늘의 추천 영화들</h1>
@@ -35,42 +50,65 @@ import axios from 'axios'
 import Date from '@/components/Date.vue'
 import Korea from '@/components/Korea.vue'
 import Week from '@/components/Week.vue'
+import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
 import { useRecommendStore } from '@/stores/recommend'
 import { onMounted, ref } from 'vue'
 import GenreRecommend from '@/components/GenreRecommend.vue'
-import { useRouter } from 'vue-router'
-const favoriteMovies = ref([])
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
+const store = useMovieStore()
+// const favoriteMovies = ref([])
 const userStore = useUserStore()
 const RecStore = useRecommendStore()
 const router = useRouter()
+
+// const userRecommendMovies = ref([])
 const MovieDetail = function(movieId) {
     console.log(movieId)
     router.push({name:'detail', params: {movieId: movieId}})
   }
 
-const favoriteMovie = function() {
-    axios({
-        method: "get",
-        url: `http://127.0.0.1:8000/api/v1/movies/${userStore.userId}/my_favorite/`,
-        headers: {
-          Authorization: `Token ${userStore.token}`
-        }
-      }).then((response) => {
-        console.log(response)
-        favoriteMovies.value = response.data
-        console.log("프로필 찜한 영화 조회")
-      })
-        .catch((error) => {
-          console.log(error)
-      })
-  }
+// const favoriteMovie = function() {
+//     axios({
+//         method: "get",
+//         url: `http://127.0.0.1:8000/api/v1/movies/${userStore.userId}/my_favorite/`,
+//         headers: {
+//           Authorization: `Token ${userStore.token}`
+//         }
+//       }).then((response) => {
 
-onMounted(async () => {
-  favoriteMovie()
-  await RecStore.getLikedGenresWithMovies(userStore.userId)
-  console.log(RecStore.likedGenres)
+//         favoriteMovies.value = response.data
+//         console.log("프로필 찜한 영화 조회")
+//       })
+//         .catch((error) => {
+//           console.log(error)
+//       })
+//   }
+//   const userRecommend = function() {
+//     axios({
+//         method: "post",
+//         url: `http://127.0.0.1:8000/api/v1/movies/${userStore.userId}/user_recommend/`,
+//         headers: {
+//           Authorization: `Token ${userStore.token}`
+//         }
+//       }).then((response) => {
+
+//         userRecommendMovies.value = response.data
+//         console.log("유저 맞춤 추천")
+//       })
+//         .catch((error) => {
+//           console.log(error)
+//       })
+//   }
+onMounted(() => {
+  RecStore.getLikedGenresWithMovies(userStore.userId)
+  store.myFavoriteMovie()
+  RecStore.userRecommend()
 })
+// onBeforeRouteLeave((to, from) =>{
+//   RecStore.userRecommendMovies = []
+//   store.favoriteMovies = []
+// })
 </script>
 
 <style scoped>

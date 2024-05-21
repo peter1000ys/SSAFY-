@@ -16,7 +16,7 @@
   
     onMounted(() => {
       store.getWeekMovies()
-      console.log(store.weekMovies)
+
     })
   
   </script>

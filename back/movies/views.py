@@ -11,7 +11,9 @@ from .utils import fetch_and_save_movies, fetch_and_save_genres, delete_movies_w
 from accounts.models import User
 from datetime import datetime
 import random
-# Create your views here.
+
+
+# 영화 리스트 조회
 @api_view(['GET', 'POST'])
 # @permission_classes([IsAuthenticated])
 def movie_list(request):
@@ -25,7 +27,7 @@ def movie_list(request):
             serializer.save(user=request.user)
             return Response(serializer.data)
 
-
+# 영화 상세 정보 조회
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def movie_detail(request, movie_pk):
@@ -34,6 +36,7 @@ def movie_detail(request, movie_pk):
         serializer = MovieSerializer(movie)
         return Response(serializer.data)
 
+# 장르 리스트 조회
 @api_view(['GET'])
 def genre_list(request):
     if request.method == 'GET':
@@ -41,6 +44,7 @@ def genre_list(request):
         serializers = GenreListSerializer(genres, many=True)
         return Response(serializers.data)
 
+# 장르별 영화 분류
 @api_view(['GET'])
 def filter_genre(request, genre_pk):
     if request.method == 'GET':
@@ -48,7 +52,7 @@ def filter_genre(request, genre_pk):
         serializers = MovieListSerializer(movies, many=True)
         return Response(serializers.data)
     
-
+# 영화 좋아요
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def movie_likes(request, movie_pk, user_pk):
@@ -66,6 +70,7 @@ def movie_likes(request, movie_pk, user_pk):
     }
     return JsonResponse(like_status)
 
+# 영화 싫어요
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def movie_hates(request, movie_pk, user_pk):
@@ -83,6 +88,8 @@ def movie_hates(request, movie_pk, user_pk):
     }
     return JsonResponse(hate_status)
 
+
+# 영화 찜하기 설정
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def movie_favorite(request, movie_pk, user_pk):
@@ -100,6 +107,7 @@ def movie_favorite(request, movie_pk, user_pk):
     }
     return JsonResponse(favorite_status)
 
+# 좋아요, 싫어요, 찜하기 현재 유저의 상태(유저 본인, 아니면 로그아웃 상태) 조회 및 적용
 @api_view(['GET'])
 def read_lhf(request,movie_pk, user_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
@@ -126,6 +134,7 @@ def read_lhf(request,movie_pk, user_pk):
     return JsonResponse(lhf_status)
 
 
+#요일별 추천 페이지 구현
 @api_view(['GET'])
 def today_recommend(request):
     movies = []
@@ -181,7 +190,7 @@ def week_recommend(request):
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
-
+# 비슷한 콘텐츠
 @api_view(['GET'])
 def similar_movies(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
@@ -190,25 +199,7 @@ def similar_movies(request, movie_pk):
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def liked_genres(request, user_pk):
-#     user = get_object_or_404(User, pk=user_pk)
-#     movies = user.like_movies.all()
-#     genres = []
-#     for movieId in movies:
-#         movie = get_object_or_404(Movie, title=movieId)
-#         genres.extend(movie.genres.all())
-#     genres = list(set(genres))
-#     serializer = GenreListSerializer(genres, many=True)
-#     return Response(serializer.data)
-    
-# @api_view(['GET'])
-# def filter_genre_rec(request, genre_pk):
-#     if request.method == 'GET':
-#         movies = get_list_or_404(Movie.objects.order_by('-popularity'), genres = genre_pk)[:15]
-#         serializers = MovieListSerializer(movies, many=True)
-#         return Response(serializers.data)
+# 좋아요 한 장르 별 영화 가져오기
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def liked_genres_with_movies(request, user_pk):
@@ -216,44 +207,41 @@ def liked_genres_with_movies(request, user_pk):
     liked_movies = user.like_movies.all()
     genres_dict = {}
 
-    # Get genres from liked movies
     for movie in liked_movies:
         for genre in movie.genres.all():
             if genre not in genres_dict:
                 genres_dict[genre] = []
     
-    # Get all movies and filter by genres
     for genre in genres_dict:
         genre_movies = Movie.objects.filter(genres=genre).order_by('-popularity')[:15]
         genres_dict[genre] = genre_movies
-    
-    # Serialize the data
+
     data = {genre.name: GenreMoviesSerializer({'genre': genre, 'movies': movies}).data for genre, movies in genres_dict.items()}
     return Response(data)
 
 
+# 좋아요 기준 유저에게 추천하는 영화 목록
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def user_recommend(request, user_pk):
+    user = get_object_or_404(User, pk=user_pk)
+    liked_movies = user.like_movies.all()
+    
+    genres = []
+
+    for movie in liked_movies:
+        for genre in movie.genres.all():
+            if genre not in genres:
+                genres.append(genre)
+    
+    movies = get_list_or_404(Movie.objects.filter(genres__in=genres))
+    movies = list(set(movies))
+    movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:10]
+    serializers = MovieListSerializer(movies, many=True)
+    return Response(serializers.data)
 
 
-# TMDB에서 장르 가져오기 위한 view함수
-class FetchGenresAPIView(APIView):
-    def get(self, request, *args, **kwargs):
-        try:
-            fetch_and_save_genres()
-            return Response({'status': 'success'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
-# TMDB에서 영화 정보 가져오기 위한 view 함수
-class FetchMoviesAPIView(APIView):
-    def get(self, request, *args, **kwargs):
-        try:
-            fetch_and_save_movies()
-            delete_movies_without_trailers()
-            return Response({'status': 'success'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+# 나의 찜 목록 조회
 @api_view(['GET',])
 @permission_classes([IsAuthenticated])
 def my_favorite(request, user_pk):
@@ -281,6 +269,7 @@ def profile_like(request, user_pk):
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data)
 
+# 검색 기능
 # 혹시 더 필요한 항목 있으면 results에 추가하기!
 def search(request):
     print(request)
@@ -296,3 +285,27 @@ def search(request):
             } for movie in movies]
         return JsonResponse({'results': results})
     return JsonResponse({'results': []})
+
+
+
+
+
+# TMDB에서 장르 가져오기 위한 view함수
+class FetchGenresAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            fetch_and_save_genres()
+            return Response({'status': 'success'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+# TMDB에서 영화 정보 가져오기 위한 view 함수
+class FetchMoviesAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            fetch_and_save_movies()
+            delete_movies_without_trailers()
+            return Response({'status': 'success'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
