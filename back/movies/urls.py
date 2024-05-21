@@ -17,17 +17,13 @@ urlpatterns = [
     path("movies/<int:movie_pk>/hates/<int:user_pk>/", views.movie_hates, name="movie_hates"),
     path("movies/<int:movie_pk>/favorite/<int:user_pk>/", views.movie_favorite, name="movie_favorite"),
     path('movies/recommend/weekday/', views.today_recommend),
-<<<<<<< back/movies/urls.py
     path('movies/recommend/korea/', views.korean_movies),
     path('movies/recommend/week/', views.week_recommend),
     path('movies/<int:user_pk>/profile_favorite/', views.profile_favorite),
     path('movies/<int:user_pk>/profile_like/', views.profile_like),
     path('movies/<int:user_pk>/my_favorite/', views.my_favorite),
     path('search/', views.search),
-=======
 
-    
->>>>>>> back/movies/urls.py
 ]
 
 

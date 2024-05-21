@@ -254,8 +254,6 @@ class FetchMoviesAPIView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-<<<<<<< back/movies/views.py
 @api_view(['GET',])
 @permission_classes([IsAuthenticated])
 def my_favorite(request, user_pk):
