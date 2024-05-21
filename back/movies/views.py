@@ -170,15 +170,19 @@ def today_recommend(request):
     # movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:10]
     movies = get_list_or_404(Movie.objects.filter(genres__in=today_genres))
     movies = list(set(movies))
-    movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:10]
+    movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:9]
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
 # 한국 영화 추천 : 최신 인기작
 @api_view(['GET'])
 def korean_movies(request):
-    movies = get_list_or_404(Movie.objects.order_by('-popularity'), original_language = 'ko')
-    movies = sorted(movies, key=lambda x: x.release_date, reverse=True)[:15]
+    movies = get_list_or_404(Movie, original_language = 'ko')
+    movies = sorted(movies, key=lambda x: (x.popularity, x.release_date), reverse=True)
+    for movie in movies:
+        if movie.pk == 504903 or  movie.pk == 699172:
+            movies.remove(movie)
+    movies = movies[:18]
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
@@ -186,7 +190,7 @@ def korean_movies(request):
 @api_view(['GET'])
 def week_recommend(request):
     movies = get_list_or_404(Movie.objects.order_by('-popularity')[:200])
-    movies = random.sample(movies, 10)
+    movies = random.sample(movies, 27)
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
@@ -213,7 +217,7 @@ def liked_genres_with_movies(request, user_pk):
                 genres_dict[genre] = []
     
     for genre in genres_dict:
-        genre_movies = Movie.objects.filter(genres=genre).order_by('-popularity')[:15]
+        genre_movies = Movie.objects.filter(genres=genre).order_by('-popularity')[:30]
         genres_dict[genre] = genre_movies
 
     data = {genre.name: GenreMoviesSerializer({'genre': genre, 'movies': movies}).data for genre, movies in genres_dict.items()}
@@ -236,7 +240,7 @@ def user_recommend(request, user_pk):
     
     movies = get_list_or_404(Movie.objects.filter(genres__in=genres))
     movies = list(set(movies))
-    movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:10]
+    movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:30]
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
