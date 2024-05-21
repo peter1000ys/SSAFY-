@@ -7,6 +7,7 @@ import LogInView from '@/views/LogInView.vue'
 import CommunityView from '@/views/CommunityView.vue'
 import ReviewDetailView from '@/views/ReviewDetailView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import SearchView from '@/views/SearchView.vue'
 
 import RelatedMovie from '@/components/RelatedMovie.vue'
 import ReviewList from '@/components/ReviewList.vue'
@@ -76,6 +77,12 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView
+    }
+    ,
+    {
+      path: '/search',
+      name: 'search',
+      component: SearchView
     }
   ]
 })

@@ -8,6 +8,7 @@ class Review(models.Model):
   movie_title = models.CharField(max_length=50)
   rank = models.IntegerField()
   content = models.TextField()
+  poster_path = models.TextField()
   created_at = models.DateTimeField(auto_now=True)
   updated_at = models.DateTimeField(auto_now_add=True)
   like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like_reviews")
