@@ -20,7 +20,6 @@
   const props = defineProps({
     reviewId:String
   })
-  console.log(props.reviewId)
 
   const content = ref(null)
   const store = useCommunityStore()
@@ -32,7 +31,6 @@
       user:userStore.userId,
       review:props.reviewId
     }
-    console.log(data)
     store.createComment(data)
     content.value = ""
   }

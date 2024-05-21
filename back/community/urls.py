@@ -24,4 +24,6 @@ urlpatterns = [
     ),
     # 유저의 리뷰 찾기
     path('reviews/<int:user_pk>/', views.user_review),
+    # 영화의 리뷰 찾기
+    path('reviews/<str:movie_title>/', views.movie_review),
 ]

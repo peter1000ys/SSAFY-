@@ -1,5 +1,3 @@
-
-코드 복사
 <!-- StarRating.vue -->
 <template>
   <div>

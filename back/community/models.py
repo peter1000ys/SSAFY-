@@ -4,6 +4,7 @@ from django.conf import settings
 
 class Review(models.Model):
   user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+  username = models.TextField()
   title = models.CharField(max_length=100)
   movie_title = models.CharField(max_length=50)
   rank = models.IntegerField()

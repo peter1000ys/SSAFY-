@@ -17,7 +17,6 @@
 import AllReviewList from "@/components/AllReviewList.vue";
 import { onMounted, ref } from "vue";
 import { useCommunityStore } from "@/stores/community";
-import { useRouter } from "vue-router";
 
 const store = useCommunityStore()
 

@@ -7,14 +7,14 @@ class ReviewListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         # fields = '__all__'
-        fields = ('id', 'movie_title', 'rank', 'content', 'user', 'poster_path')
+        fields = ('id', 'movie_title', 'rank', 'content', 'user', 'poster_path', 'username')
 
 # 리뷰 작성
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         # fields = '__all__'
-        fields = ('title', 'movie_title', 'rank', 'content', 'user', 'poster_path')
+        fields = ('title', 'movie_title', 'rank', 'content', 'user', 'poster_path', 'username')
         read_only_fielsds = ('user',)
 
 # 리뷰 상세 정보 조회
