@@ -170,3 +170,12 @@ def review_comment_hate(request, review_pk, comment_pk, user_pk):
             "count": comment.hate_users.count(),
         }
         return JsonResponse(hate_status)
+
+# 유저가 작성한 게시글 찾기
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def user_review(request, user_pk):
+    if request.method == 'GET':
+        reviews = Review.objects.filter(user=user_pk)
+        serializer = ReviewDetailSerializer(reviews, many=True)
+        return Response(serializer.data)

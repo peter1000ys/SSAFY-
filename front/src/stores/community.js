@@ -2,10 +2,8 @@ import axios from "axios";
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { useUserStore } from '@/stores/user'
-import { useRouter } from 'vue-router'
 
 export const useCommunityStore = defineStore("community",() => {
-    const router = useRouter()
     const reviews = ref([])
     const comments = ref([])
     const store = useUserStore()
@@ -29,8 +27,9 @@ export const useCommunityStore = defineStore("community",() => {
       });
     };
 
+    // 리뷰 작성
     const createReview = function (data) {
-      const { title, movie_title, content, rank, user } = data
+      const { title, movie_title, content, rank, user, poster_path } = data
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/api/v1_1/reviews/",
@@ -39,7 +38,8 @@ export const useCommunityStore = defineStore("community",() => {
           movie_title,
           rank,
           content,
-          user
+          user,
+          poster_path
         },
         headers: {
           Authorization: `Token ${store.token}`
@@ -52,9 +52,9 @@ export const useCommunityStore = defineStore("community",() => {
         .catch((error) => {
           console.log(error)
         })
-      router.push({name:"home"})
     };
 
+    // 리뷰<-댓글 조회
     const getComments = function (review) {
       axios({
         method: "get",
@@ -68,6 +68,7 @@ export const useCommunityStore = defineStore("community",() => {
       });
     };
 
+    // 리뷰<-댓글 생성
     const createComment = function (data) {
       const { content, user, review } = data
       console.log(content)
@@ -85,13 +86,15 @@ export const useCommunityStore = defineStore("community",() => {
       }).then((response) => {
         console.log(response)
         console.log("코멘트 작성 완료")
-        router.push({name:"community"})
+        getComments(review)
+
       })
         .catch((error) => {
           console.log(error)
         })
     }
 
+    // 리뷰 좋아요
     const reviewLike = function (data) {
       const { user, review } = data
       axios({
@@ -111,6 +114,7 @@ export const useCommunityStore = defineStore("community",() => {
       })
     }
 
+    // 리뷰 싫어요
     const reviewHate = function (data) {
       const { user, review } = data
       axios({

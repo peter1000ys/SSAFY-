@@ -183,3 +183,39 @@ class FetchMoviesAPIView(APIView):
             return Response({'status': 'success'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+# 프로필 찜한 영화 가져오기
+# serializer 는 있는거 사용!
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def profile_favorite(request, user_pk):
+    if request.method == 'GET':
+        movies = Movie.objects.filter(favorite_users=user_pk)
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+def profile_like(request, user_pk):
+    if request.method == 'GET':
+        movies = Movie.objects.filter(like_users=user_pk)
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data)
+
+# 혹시 더 필요한 항목 있으면 results에 추가하기!
+def search(request):
+    print(request)
+    query = request.GET.get('query', '')
+    if query:
+        movies = Movie.objects.filter(title__icontains=query)
+        results = [{
+            'tmdb_id': movie.tmdb_id,
+            'title': movie.title,
+            'overview': movie.overview,
+            'poster_path': movie.poster_path,
+            'genres': [genre.name for genre in movie.genres.all()],
+            } for movie in movies]
+        return JsonResponse({'results': results})
+    return JsonResponse({'results': []})

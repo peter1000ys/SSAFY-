@@ -32,7 +32,7 @@ const login = function () {
   const data = new FormData(form.value)
   store.login(data, username)
   form.value.reset()
-  router.push({ name: "home" });
+  router.push({ name: "home" })
 } 
 </script>
 

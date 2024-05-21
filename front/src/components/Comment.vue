@@ -4,7 +4,8 @@
     <form @submit.prevent="createComment">
       <div>
         <label for="content">content : </label>
-        <textarea name="content" id="content" cols="30" rows="1" v-model="content"></textarea>
+        <!-- <textarea name="content" id="content" cols="30" rows="1" v-model="content"></textarea> -->
+        <input type="text" name="content" id="content"  v-model="content">
       </div>
       <button type="submit">create</button>
     </form>
@@ -20,7 +21,6 @@
     reviewId:String
   })
   console.log(props.reviewId)
-  // console.log(valueOf(props.reviewId))
 
   const content = ref(null)
   const store = useCommunityStore()
@@ -34,7 +34,7 @@
     }
     console.log(data)
     store.createComment(data)
-    // content.value = ""
+    content.value = ""
   }
 
 </script>

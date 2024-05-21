@@ -3,12 +3,13 @@
   <div>
     <h1>ReviewDetailView</h1>
     <div>
+      <img class="img" :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`" alt="...">
       <p>번호 : {{ review.id }}</p>
       <p>영화 제목 : {{ review.movie_title }}</p>
       <p>리뷰 제목 : {{ review.title }}</p>
       <p>리뷰 내용 : {{ review.content }}</p>
-      <!-- <p>작성 시간 : {{ review.created_at.substr(0, 10) }} {{ review.created_at.substr(11, 8) }}</p> -->
       <p>작성자 : {{ review.user }}</p>
+      <p>평점 : {{ review.rank }} 점</p>
         <button @click="reviewLike()">{{reviewLiked? '좋아요 취소':'좋아요'}}</button>
         <button @click="reviewHate()">{{reviewHated? '싫어요 취소':'싫어요'}}</button>
         <p>좋아요 수 : {{reviewLikeCount}}</p>
@@ -17,16 +18,7 @@
     </div>
     <h3>Comment List</h3>
     <CommentList v-for="comment in comments" :key="comment.id" :comment="comment"/>
-    <!-- <div v-for="comment in comments" :key="comment.id" :comment="commnet">
-      <p>{{comment.id}}번 | {{comment.content }} | {{ comment.user }}번 유저 | {{ comment.review }}번 리뷰 </p>
-        <button @click="commentLike(comment.id)">{{commentLiked? '좋아요 취소':'좋아요'}}</button>
-        <button @click="commentHate(comment.id)">{{commentHated? '싫어요 취소':'싫어요'}}</button>
-        <p>좋아요 수 : {{commentLikeCount}}</p>
-        <p>싫어요 수 : {{commentHateCount}}</p>
-    </div> -->
-    
     <div>
-    <hr>
       <Comment :review-id="reviewId"/>
     </div>
   </div>
@@ -146,5 +138,7 @@
 </script>
 
 <style scoped>
-
+  .img{
+    width: 100px;
+  }
 </style>

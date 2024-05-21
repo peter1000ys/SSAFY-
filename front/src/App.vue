@@ -6,6 +6,8 @@
       <RouterLink :to="{ name:'list'}">list</RouterLink>
       <span> | </span>
       <RouterLink :to="{ name:'community'}">community</RouterLink>
+      <span> | </span>
+      <RouterLink :to="{ name:'search'}">search</RouterLink>
       <!-- <span> | </span> -->
       <!-- MovieDetailView 라우터 링크 -->
       <!-- <RouterLink :to="{ name:'detail', params: {'movieId' : movieId} }">detail</RouterLink> -->
@@ -19,6 +21,8 @@
     </div>
     <div v-else>
       <button @click="logout">로그아웃</button>
+      <span> | </span>
+      <RouterLink :to="{ name:'profile'}">프로필</RouterLink>
     </div>
   </div>
   <RouterView/>

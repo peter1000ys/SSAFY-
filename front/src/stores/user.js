@@ -74,6 +74,7 @@ export const useUserStore = defineStore("user", () => {
       });
     };
 
+    // 프로필용 유정 정보 저장
     const profile = function () {
       axios({
         method: "get",
