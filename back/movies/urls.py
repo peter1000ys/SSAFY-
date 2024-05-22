@@ -23,7 +23,7 @@ urlpatterns = [
     path('movies/<int:user_pk>/profile_like/', views.profile_like),
     path('movies/<int:user_pk>/my_favorite/', views.my_favorite),
     path('search/', views.search),
-
+    path('movies/<int:movie_pk>/related/', views.related_movies, name='related-movies'),
     path('movies/<int:user_pk>/user_recommend/', views.user_recommend),
 ]
 

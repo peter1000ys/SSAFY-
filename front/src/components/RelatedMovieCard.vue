@@ -1,10 +1,10 @@
 
 <template>
-  <div  @click="MovieDetail(movie.id)">
+  <div  @click="MovieDetail(movie.tmdb_id)">
     <div id="box">
     <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
     <div class="overlay">
-      <h1 class="heading">{{ movie.id }}</h1>
+      <h1 class="heading">{{ movie.title }}</h1>
       <div class="data">
         <!-- <span class="date">{{movie.release_date}}</span> -->
         <!-- <span class="user-id">{{ movie.overview }}</span> -->

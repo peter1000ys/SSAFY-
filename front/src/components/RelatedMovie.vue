@@ -3,7 +3,7 @@
   <div>
     <h1>related</h1>
     <div class="movie-card-container">
-      <div v-for="movie in store.similarMovies" :key="movie.id">
+      <div v-for="movie in store.similarMovies" :key="movie.tmdb_id">
               <RelatedMovieCard :movie="movie" />
       </div>
 
