@@ -5,7 +5,7 @@ from .views import FetchMoviesAPIView, FetchGenresAPIView
 urlpatterns = [
     path('movies/', views.movie_list),
     path('movies/genres/', views.genre_list),
-    path('movies/<int:movie_pk>/similar/', views.similar_movies),
+    # path('movies/<int:movie_pk>/similar/', views.similar_movies),
     path('movies/<int:movie_pk>/', views.movie_detail),
     path('movies/<int:movie_pk>/<int:user_pk>/', views.read_lhf),
     path('fetch-movies/', FetchMoviesAPIView.as_view(), name='fetch-movies'),

@@ -1,48 +1,110 @@
 <template>
-<div v-if="userStore.isLogin">
-  <div v-if="RecStore.userRecommendMovies.length">
-    <div class="movie-card-container">
-        <h3 v-if="RecStore.userRecommendMovies">{{ userStore.loginUsername }} 님! 이런 영화는 어떠신가요?</h3>
-        <div v-for="movie in RecStore.userRecommendMovies" :key="movie.id">
-          <div id="box" @click="MovieDetail(movie.pk)">
-            <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
-            <div class="overlay">
-              <h1 class="heading">{{ movie.title }}</h1>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="bg-black">
+    <div class="banner">
+      <BannerSlide />
     </div>
-    <div v-if="store.favoriteMovies.length">
-      <div class="movie-card-container">
-          <h3>찜한 영화 목록</h3>
-          <div v-for="movie in store.favoriteMovies" :key="movie.id">
-            <div id="box" @click="MovieDetail(movie.tmdb_id)">
-              <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
-              <div class="overlay">
-                <h1 class="heading">{{ movie.title }}</h1>
+    <!-- 메인 콘텐츠 -->
+    <div v-if="userStore.isLogin" class="main-content">
+      <div class="category-list">
+        <div v-if="store.favoriteMovies.length">
+          <div class="category">
+            <h3 class="title">찜한 영화 목록</h3>
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div v-for="(movieGroup, index) in chunkArray(store.favoriteMovies, 9)" :class="['carousel-item', { active: index === 0 }]" :key="index">
+                  <div class="d-flex">
+                    <div class="movie" v-for="movie in movieGroup" :key="movie.id" @click="MovieDetail(movie.tmdb_id)">
+                      <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-if="store.favoriteMovies.length > 9">
+                <button class="carousel-control-prev" type="button" data-bs-target="#favoriteCarousel" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#favoriteCarousel" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-</div>
-  
-  <div>
-    <h1>오늘의 추천 영화들</h1>
-    <Date />
-    <h1>랜덤 추천 영화</h1>
-    <Week />
-    <h1>한국의 최근 인기작들</h1>
-    <Korea />
-    <div v-if="RecStore.likedGenres">
-      <div v-for="(movies, genre) in RecStore.likedGenres" :key="genre">
-        <h2>{{ genre }}</h2>
-        <GenreRecommend :movies="movies"/>
+
+      <div class="category-list">
+        <div v-if="RecStore.userRecommendMovies.length">
+          <div class="category">
+            <h3 class="title">{{ userStore.loginUsername }} 님! 이런 영화는 어떠신가요?</h3>
+            <div id="usercarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div v-for="(movieGroup, index) in chunkArray(RecStore.userRecommendMovies, 9)" :class="['carousel-item', { active: index === 0 }]" :key="index">
+                  <div class="d-flex">
+                    <div class="movie" v-for="movie in movieGroup" :key="movie.id" @click="MovieDetail(movie.pk)">
+                      <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#usercarouselExampleControls" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#usercarouselExampleControls" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="additional-content">
+      <div class="category-list">
+        <div class="category">
+          <h3 class="title">오늘의 추천 영화들</h3>
+          <Date />
+        </div>
+      </div>
+      <div class="category-list">
+        <div class="category">
+          <h3 class="title">랜덤 추천 영화</h3>
+          <Week />
+        </div>
+      </div>
+      <div class="category-list">
+        <div class="category">
+          <h3 class="title">한국의 최근 인기작들</h3>
+          <Korea />
+        </div>
+      </div>
+      <div class="category-list">
+        <div class="category">
+          <div v-if="RecStore.likedGenres">
+        <div v-for="(movies, genre) in RecStore.likedGenres" :key="genre">
+            <h3 class="title">{{ genre }}</h3>
+            <div :id="`usercarouselExampleControls-${genre}`" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <GenreRecommend :movies="movies"/>
+                </div>
+                <button class="carousel-control-prev" type="button" :data-bs-target="`#usercarouselExampleControls-${genre}`" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" :data-bs-target="`#usercarouselExampleControls-${genre}`" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        </div>
       </div>
     </div>
   </div>
-
+  </div>
 </template>
 
 <script setup>
@@ -50,179 +112,125 @@ import axios from 'axios'
 import Date from '@/components/Date.vue'
 import Korea from '@/components/Korea.vue'
 import Week from '@/components/Week.vue'
+import BannerSlide from '@/components/BannerSlide.vue'
 import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
 import { useRecommendStore } from '@/stores/recommend'
 import { onMounted, ref } from 'vue'
 import GenreRecommend from '@/components/GenreRecommend.vue'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
+
+
 const store = useMovieStore()
-// const favoriteMovies = ref([])
 const userStore = useUserStore()
 const RecStore = useRecommendStore()
 const router = useRouter()
 
-// const userRecommendMovies = ref([])
 const MovieDetail = function(movieId) {
     console.log(movieId)
     router.push({name:'detail', params: {movieId: movieId}})
   }
 
-// const favoriteMovie = function() {
-//     axios({
-//         method: "get",
-//         url: `http://127.0.0.1:8000/api/v1/movies/${userStore.userId}/my_favorite/`,
-//         headers: {
-//           Authorization: `Token ${userStore.token}`
-//         }
-//       }).then((response) => {
+// Array를 일정 크기로 나누는 함수
+const chunkArray = (array, size) => {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+}
 
-//         favoriteMovies.value = response.data
-//         console.log("프로필 찜한 영화 조회")
-//       })
-//         .catch((error) => {
-//           console.log(error)
-//       })
-//   }
-//   const userRecommend = function() {
-//     axios({
-//         method: "post",
-//         url: `http://127.0.0.1:8000/api/v1/movies/${userStore.userId}/user_recommend/`,
-//         headers: {
-//           Authorization: `Token ${userStore.token}`
-//         }
-//       }).then((response) => {
-
-//         userRecommendMovies.value = response.data
-//         console.log("유저 맞춤 추천")
-//       })
-//         .catch((error) => {
-//           console.log(error)
-//       })
-//   }
 onMounted(() => {
   RecStore.getLikedGenresWithMovies(userStore.userId)
   store.myFavoriteMovie()
   RecStore.userRecommend()
 })
-// onBeforeRouteLeave((to, from) =>{
-//   RecStore.userRecommendMovies = []
-//   store.favoriteMovies = []
-// })
 </script>
 
 <style scoped>
-.img {
-  width: 100px;
-}
-.movie-card-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px; /* 카드 간격을 조정합니다 */
+
+.main-content {
+  margin-top: 0px;
+  padding: 0px;
 }
 
-.movie-card {
-  flex: 1 1 calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
-  max-width: calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
-  margin: 10px; /* 카드 간격을 조정합니다 */
-}
 
-@media (max-width: 1200px) {
-  .movie-card {
-    flex: 1 1 calc(25% - 20px); /* 4개의 열로 조정 */
-    max-width: calc(25% - 20px);
-  }
-}
-
-@media (max-width: 768px) {
-  .movie-card {
-    flex: 1 1 calc(33.333% - 20px); /* 3개의 열로 조정 */
-    max-width: calc(33.333% - 20px);
-  }
-}
-
-@media (max-width: 480px) {
-  .movie-card {
-    flex: 1 1 calc(50% - 20px); /* 2개의 열로 조정 */
-    max-width: calc(50% - 20px);
-  }
-}
-
-#box {
-  width: 300px;
-  height: 500px;
-  border-radius: 8px;
-  overflow: hidden;
-  margin: 100px auto;
-  transition: all 0.3s cubic-bezier(0.42, 0.0, 0.58, 1.0);
-}
-
-#box:hover {
-  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-  transform: translateY(-10px);
-}
-#box * {
-  padding: 0 5px;
-}
-
-#box .img {
-  display: block;
-  width: inherit;
-  height: inherit;;
-  padding: 0;
-
-}
-#box .heading {
-  font-size: 28px;
-  color: white;
-}
-
-#box .data {
+.category-list {
   display: flex;
   flex-direction: column;
-  font-size: 12px;
-  color: #666;
+  padding: 0px 20px;
+  /* margin-top: 20px; */
 }
 
-#box .data span {
-  padding: 0;
+.category {
+  padding-bottom: 10px;
+  padding: 10px 30px;
 }
 
-#box .data .date {
-  margin-bottom: 2px;
+.category .title {
+  font-size: 18px;
+  font-weight: 900;
+  color: white;
+  padding: 15px 0;
 }
 
-#box .data .user-id {
-  font-size: 16px;
-  color: #000;
-  font-weight: 600;
+.d-flex {
+  display: flex;
 }
 
-#box .texts {
+.movie {
+  padding: 5px;
+  position: relative;
+}
+
+.movie:hover {
+  transform: scale(1.1);
+  transition: 0.3s;
+  transition-delay: 0s;
+}
+
+.movie img {
+  border-radius: 4px;
+}
+
+.img {
+  width: 180px;
+  height: 300px; /* 이미지 높이 추가 */
+}
+
+.banner img {
+  width: 100%;
+}
+
+.heading {
   font-size: 14px;
-  line-height: 18px;
+  color: white;
+  padding: 5px;
 }
 
-.overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: inherit;
-            height: inherit;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            background: rgb(0, 0, 0, 0.5);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-	}
+.movie-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-#box:hover .overlay {
-            opacity: 1;
-            pointer-events: auto;
-            
- 	}
+.movie-card-container h3 {
+  align-self: flex-start;
+}
+
+.carousel-control-prev, .carousel-control-next {
+  width: 50px; /* 이미지 크기와 동일하게 설정 */
+  height: 300px; /* 이미지 크기와 동일하게 설정 */
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+  width: 100px; /* 아이콘 크기 조정 */
+  height: 100px; /* 아이콘 크기 조정 */
+}
+
+.small-carousel-button[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
 
 </style>

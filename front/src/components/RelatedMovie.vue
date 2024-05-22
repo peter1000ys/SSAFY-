@@ -15,9 +15,13 @@
 import { onMounted } from 'vue';
 import { useMovieStore } from '@/stores/movie';
 import RelatedMovieCard from './RelatedMovieCard.vue';
+import { useRoute } from 'vue-router';
 
+const route = useRoute()
 const store = useMovieStore()
-
+onMounted(() =>{
+  store.movieDetail(route.params.movieId)
+})
 
 </script>
 

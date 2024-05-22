@@ -1,10 +1,24 @@
 
 <template>
-<div class="movie-card-container">
-          <div v-for="movie in store.weekday" :key="movie.id">
-            <DateMovieCard :movie="movie" />
+
+    <div id="dateCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div v-for="(movieGroup, index) in chunkArray(store.weekday, 9)" :class="['carousel-item', { active: index === 0 }]" :key="index">
+          <div class="d-flex">
+            <DateMovieCard v-for="movie in movieGroup" :key="movie.id" :movie="movie"/>
           </div>
         </div>
+      </div>
+      <!-- <button class="carousel-control-prev" type="button" data-bs-target="#dateCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#dateCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button> -->
+    </div>
+
 </template>
 
 <script setup>
@@ -13,8 +27,14 @@ import { onMounted, ref } from 'vue';
 import { useRecommendStore } from '@/stores/recommend';
 
 const store = useRecommendStore()
-
-  onMounted(() => {
+const chunkArray = (array, size) => {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+}
+onMounted(() => {
     store.getTodayRecommend()
 
   })
@@ -22,37 +42,36 @@ const store = useRecommendStore()
 </script>
 
 <style scoped>
-.movie-card-container {
+.d-flex {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px; /* 카드 간격을 조정합니다 */
+}
+.movie {
+  padding: 5px;
+  position: relative;
 }
 
-.movie-card {
-  flex: 1 1 calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
-  max-width: calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
-  margin: 10px; /* 카드 간격을 조정합니다 */
+.movie:hover {
+  transform: scale(1.1);
+  transition: 0.3s;
+  transition-delay: 0s;
 }
 
-@media (max-width: 1200px) {
-  .movie-card {
-    flex: 1 1 calc(25% - 20px); /* 4개의 열로 조정 */
-    max-width: calc(25% - 20px);
-  }
+.movie img {
+  border-radius: 4px;
 }
 
-@media (max-width: 768px) {
-  .movie-card {
-    flex: 1 1 calc(33.333% - 20px); /* 3개의 열로 조정 */
-    max-width: calc(33.333% - 20px);
-  }
+.carousel-control-prev, .carousel-control-next {
+  width: 50px; /* 이미지 크기와 동일하게 설정 */
+  height: 300px; /* 이미지 크기와 동일하게 설정 */
 }
 
-@media (max-width: 480px) {
-  .movie-card {
-    flex: 1 1 calc(50% - 20px); /* 2개의 열로 조정 */
-    max-width: calc(50% - 20px);
-  }
+.carousel-control-prev-icon, .carousel-control-next-icon {
+  width: 100px; /* 아이콘 크기 조정 */
+  height: 100px; /* 아이콘 크기 조정 */
+}
+
+.small-carousel-button[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
 }
 </style>

@@ -7,7 +7,7 @@ class GenreMoviesSerializer(serializers.Serializer):
     class MovieListSerializer(serializers.ModelSerializer):
         class Meta:
             model = Movie
-            fields = ('pk', 'title', 'overview','release_date','poster_path','vote_count','vote_average')
+            fields = ('pk', 'title', 'overview','release_date','poster_path','vote_count','vote_average', 'backdrop_path')
             
     genre = serializers.CharField(source='genre.name')
     movies = MovieListSerializer(many=True)
@@ -32,7 +32,7 @@ class MovieListSerializer(serializers.ModelSerializer):
     user=UserInfoSerializer(read_only=True)
     class Meta:
         model = Movie
-        fields = ('pk', 'title', 'overview','release_date','poster_path','vote_count','vote_average', 'user')
+        fields = ('pk', 'title', 'overview','release_date','poster_path','vote_count','vote_average', 'backdrop_path', 'user')
 
 
 

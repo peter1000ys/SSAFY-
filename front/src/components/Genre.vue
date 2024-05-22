@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Genre: {{ genreName }}</h1>
+    <h2 class="genre-title">{{ genreName }}</h2>
     <div class="movie-card-container">
       <div v-for="movie in paginatedStoreMovies" :key="movie.id" class="movie-card">
         <GenreMovieCard :movie="movie" />
@@ -70,6 +70,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.genre-title {
+  color: white;
+  margin-left: 200px;
+}
 .movie-card-container {
   display: flex;
   flex-wrap: wrap;
@@ -78,6 +82,7 @@ onMounted(() => {
 }
 
 .movie-card {
+  height: 200px;
   flex: 1 1 calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
   max-width: calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
   margin: 10px; /* 카드 간격을 조정합니다 */
@@ -102,6 +107,10 @@ onMounted(() => {
     flex: 1 1 calc(50% - 20px); /* 2개의 열로 조정 */
     max-width: calc(50% - 20px);
   }
+}
+
+.img {
+  width: 100px;
 }
 
 .pagination {

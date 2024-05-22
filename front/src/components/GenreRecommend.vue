@@ -1,10 +1,12 @@
 
 <template>
   <div>
-
+    
     <div class="movie-card-container">
-      <div v-for="movie in movies['movies']" :key="movie.pk">
-              <GenreMovieCard :movie="movie" />
+      <div v-for="(movieGroup, index) in chunkArray( movies['movies'], 9)" :class="['carousel-item', { active: index === 0 }]" :key="index">
+        <div class="d-flex">
+            <GenreRecMovieCard v-for="movie in movieGroup" :key="movie.id" :movie="movie"/>
+          </div>
             </div>
 
     </div>
@@ -12,47 +14,55 @@
 </template>
 
 <script setup>
-import GenreMovieCard from '@/components/GenreMovieCard.vue';
+import GenreRecMovieCard from '@/components/GenreRecMovieCard.vue';
 const props = defineProps({
   movies:Object
 })
 console.log(props.movies)
-
+const chunkArray = (array, size) => {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+}
 
 </script>
 
 <style scoped>
-.movie-card-container {
+.date-carousel {
+  padding: 20px;
+}
+.d-flex {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px; /* 카드 간격을 조정합니다 */
+}
+.movie {
+  padding: 5px;
+  position: relative;
 }
 
-.movie-card {
-  flex: 1 1 calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
-  max-width: calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
-  margin: 10px; /* 카드 간격을 조정합니다 */
+.movie:hover {
+  transform: scale(1.1);
+  transition: 0.3s;
+  transition-delay: 0s;
 }
 
-@media (max-width: 1200px) {
-  .movie-card {
-    flex: 1 1 calc(25% - 20px); /* 4개의 열로 조정 */
-    max-width: calc(25% - 20px);
-  }
+.movie img {
+  border-radius: 4px;
 }
 
-@media (max-width: 768px) {
-  .movie-card {
-    flex: 1 1 calc(33.333% - 20px); /* 3개의 열로 조정 */
-    max-width: calc(33.333% - 20px);
-  }
+.carousel-control-prev, .carousel-control-next {
+  width: 50px; /* 이미지 크기와 동일하게 설정 */
+  height: 300px; /* 이미지 크기와 동일하게 설정 */
 }
 
-@media (max-width: 480px) {
-  .movie-card {
-    flex: 1 1 calc(50% - 20px); /* 2개의 열로 조정 */
-    max-width: calc(50% - 20px);
-  }
+.carousel-control-prev-icon, .carousel-control-next-icon {
+  width: 100px; /* 아이콘 크기 조정 */
+  height: 100px; /* 아이콘 크기 조정 */
+}
+
+.small-carousel-button[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
 }
 </style>

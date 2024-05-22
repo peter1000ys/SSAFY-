@@ -1,10 +1,10 @@
 
 <template>
-  <div  @click="MovieDetail(movie.pk)">
+  <div  @click="MovieDetail(movie.id)">
     <div id="box">
     <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
     <div class="overlay">
-      <h1 class="heading">{{ movie.title }}</h1>
+      <h1 class="heading">{{ movie.id }}</h1>
       <div class="data">
         <!-- <span class="date">{{movie.release_date}}</span> -->
         <!-- <span class="user-id">{{ movie.overview }}</span> -->
@@ -18,8 +18,9 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
+import { useRouter,onBeforeRouteLeave } from 'vue-router';
 import { useMovieStore } from '@/stores/movie';
+
 defineProps({
     movie: Object
 })
@@ -27,9 +28,15 @@ const router = useRouter()
 const store = useMovieStore()
 const MovieDetail = function(movieId) {
   store.read_lhf(movieId)
+  store.movieDetail(movieId)
   router.push({name:'detail', params: {movieId: movieId}})
   
 }
+onBeforeRouteLeave((to, from) => {
+  store.movieVideoKey = ''
+  store.movie = {}
+  store.similarMovies = []
+})
 </script>
 
 <style scoped>

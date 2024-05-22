@@ -17,6 +17,7 @@
     >
   </div>
   <RouterView />
+  <chatbot />
 </template>
 
 <!-- <div>

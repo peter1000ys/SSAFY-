@@ -1,14 +1,10 @@
 <template>
   <div>
-    <h1>MovieListView</h1>
-    <div v-for="genre in store.genres" :key="genre.tmdb_id">
-      <div>
-        <RouterLink :to="{ name: 'genre', params: { genreId: genre.tmdb_id } }">{{ genre.name }}</RouterLink>
-      </div>
-    </div>
+    <GenreButtons />
+
+    
     <div>
-      <h1>영화 검색</h1>
-      <input v-model="query" @input="searchMovies" placeholder="Search for a movie" />
+      <input v-model="query" @input="searchMovies" placeholder="Search for a movie" class="search-input"/>
       <div v-if="movies.length">
         <div class="movie-card-container">
           <div v-for="movie in paginatedMovies" :key="movie.id" class="movie-card" @click="MovieDetail(movie.tmdb_id)">
@@ -43,10 +39,11 @@
 </template>
 
 <script setup>
+import GenreButtons from '@/components/GenreButtons.vue';
 import GenreMovieCard from '@/components/GenreMovieCard.vue';
 import { useMovieStore } from '@/stores/movie';
 import { onMounted, ref, computed } from 'vue';
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterView } from 'vue-router';
 import axios from 'axios';
 import { useRouter } from 'vue-router'
 
@@ -128,6 +125,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.search-input {
+  width: 80%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  margin-top: 70px;
+  border-radius: 4px;
+  background-color: #f0f0f0; /* 회색 배경색 */
+}
+.search-input:focus {
+    outline: 2px solid rgb(255, 0, 0);
+}
+
 .movie-card-container {
   display: flex;
   flex-wrap: wrap;
@@ -136,6 +146,7 @@ onMounted(() => {
 }
 
 .movie-card {
+  height: 200px;
   flex: 1 1 calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
   max-width: calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
   margin: 10px; /* 카드 간격을 조정합니다 */
@@ -173,4 +184,9 @@ onMounted(() => {
   gap: 10px;
   margin-top: 20px;
 }
+button a{
+  text-decoration-line: none;
+  color: white;
+}
 </style>
+
