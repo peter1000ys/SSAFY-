@@ -1,42 +1,74 @@
 <template>
-  <div>
-    <h3>Comment Create</h3>
+  <div class="fs-4">
+    <hr class="border border-danger border-2 opacity-50" />
+
+    <p class="fs-3 font text-center">댓글 작성</p>
     <form @submit.prevent="createComment">
-      <div>
-        <label for="content">content : </label>
+      <div class="d-flex align-center justify-content-center">
+        <label for="content"> </label>
         <!-- <textarea name="content" id="content" cols="30" rows="1" v-model="content"></textarea> -->
-        <input type="text" name="content" id="content"  v-model="content">
+        <input
+          class="form-control"
+          type="text"
+          name="content"
+          id="content"
+          v-model="content"
+        />
+        <button class="ms-2 btn btn-outline-danger" type="submit">
+          작성하기
+        </button>
       </div>
-      <button type="submit">create</button>
     </form>
   </div>
 </template>
 
 <script setup>
-  import { ref } from 'vue'
-  import { useCommunityStore } from '@/stores/community';
-  import { useUserStore } from '@/stores/user';
-  
-  const props = defineProps({
-    reviewId:String
-  })
+import { ref } from "vue";
+import { useCommunityStore } from "@/stores/community";
+import { useUserStore } from "@/stores/user";
 
-  const content = ref(null)
-  const store = useCommunityStore()
-  const userStore = useUserStore()
+const props = defineProps({
+  reviewId: String,
+});
 
-  const createComment = function() {
-    const data = {
-      content: content.value,
-      user:userStore.userId,
-      review:props.reviewId
-    }
-    store.createComment(data)
-    content.value = ""
-  }
+const content = ref(null);
+const store = useCommunityStore();
+const userStore = useUserStore();
 
+const createComment = function () {
+  const data = {
+    content: content.value,
+    user: userStore.userId,
+    review: props.reviewId,
+  };
+  store.createComment(data);
+  content.value = "";
+};
 </script>
 
 <style scoped>
-
+.review-create-container {
+  background-color: black;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.form-group {
+  margin-bottom: 15px;
+}
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.form-control {
+  width: 40%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+}
 </style>

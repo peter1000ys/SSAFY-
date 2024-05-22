@@ -1,7 +1,7 @@
 
 <template>
-  <div>
-    <h1>영화 검색</h1>
+  <div class="text-white fs-3">
+    <h1 class="fs-1">영화 검색</h1>
     <input v-model="query" @input="searchMovies" placeholder="Search for a movie" />
     <ul v-if="movies.length">
       <li v-for="movie in movies" :key="movie.tmdb_id" class="search-result__card" @click="selectMovie(movie.title, movie.tmdb_id)">
@@ -52,6 +52,6 @@ const selectMovie = (title, movieId) => {
 .search-result__card:hover  {
   cursor: pointer;
   color: white;
-  background-color: #3B82F6; 
+  background-color: #ec3c39; 
 }
 </style>

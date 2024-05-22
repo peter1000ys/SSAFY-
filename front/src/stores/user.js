@@ -21,7 +21,10 @@ export const useUserStore = defineStore("user", () => {
       }).then((response) => {
         console.log(response)
         console.log("회원 가입 완료")
-      });
+      }).catch((error) => {
+        console.log(error)
+      })
+
     };
 
     const login = function (data, username) {
