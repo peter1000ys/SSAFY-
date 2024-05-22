@@ -1,23 +1,97 @@
 <template>
-  <div>
-    <h1>Profile</h1>
-    <img src="@/assets/profile.jpg" alt="#">
-    <div>
-      <h3> 닉네임 : {{ store.loginUsername}}</h3>
-      <div v-for="review in reviews">
-        <img class="img" :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`" alt="...">
-        <p @click.prevent="goDetail(review.id)" >영화 : {{ review.movie_title }} / 리뷰 : {{ review.content }}</p>
+  <div v-if="favoriteMovies.length">
+    <div class="cover-container">
+      <img
+        class="img"
+        :src="`https://image.tmdb.org/t/p/w1280${favoriteMovies[randomIndex].backdrop_path}`"
+        alt="..."
+      />
+      <div class="gradient-overlay"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- <h1 class="font">프로필</h1> -->
+    <div class="d-flex align-items-center justify-content-center flex-column">
+      <div class="d-flex">
+        <div class="box">
+          <img class="profile" src="@/assets/profile.jpg" alt="#" />
+          <p class="fs-4">닉네임 : {{ store.loginUsername }}</p>
+        </div>
+      </div>
+
+      <!-- <div class="d-flex">
+        <div v-for="review in reviews">
+          <div class="d-flex ">
+            <img
+              class="img"
+              :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`"
+              alt="..."
+            />
+            <div>
+              <p class="mb-1" @click.prevent="goDetail(review.id)">
+                {{ review.movie_title }}
+              </p>
+              <p @click.prevent="goDetail(review.id)">
+                리뷰 내용 : {{ review.content }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr/> -->
+    </div>
+
+    <div class="mt-5" v-if="reviews">
+      <h2 class="font">작성한 리뷰 목록</h2>
+      <div class="movie-card-container">
+        <div v-for="review in reviews" :key="review.id">
+          <div id="box">
+            <img
+              :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`"
+              class="img"
+              alt="..."
+            />
+            <div class="overlay">
+              <div class="heading">
+                {{ review.movie_title }}
+              </div>
+
+              <div class="texts mt-3">리뷰 내용 : {{ review.content }}</div>
+
+              <div class="texts mt-3">
+                좋아요 : {{ review.like_users.length }}
+              </div>
+
+              <button
+                class="btn btn-outline-danger mt-3 mb-5"
+                @click="goDetail(review.id)"
+              >
+                리뷰 상세 내용 보기
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <hr>
-    <div v-if="favoriteMovies">
-      <h3>찜한 영화 목록</h3>
+
+    <div class="mt-5" v-if="favoriteMovies">
+      <h2 class="font">찜한 영화 목록</h2>
       <div class="movie-card-container">
         <div v-for="movie in favoriteMovies" :key="movie.id">
-          <div id="box" @click="MovieDetail(movie.tmdb_id)">
-            <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
+          <div id="box" >
+            <img
+              :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
+              class="img"
+              alt="..."
+            />
             <div class="overlay">
-              <h1 class="heading">{{ movie.title }}</h1>
+              <h1 class="heading">
+                {{ movie.title }}
+              </h1>
+              <button class="btn btn-outline-danger mt-3 mb-3" @click="MovieDetail(movie.tmdb_id)">
+                영화 상세 보기
+              </button>
             </div>
           </div>
         </div>
@@ -27,83 +101,135 @@
 </template>
 
 <script setup>
-  import { onMounted, ref, computed } from 'vue'
-  import { useUserStore } from '@/stores/user'
-  import axios from 'axios'
-  import { useRouter } from 'vue-router';
+import { onMounted, ref, computed } from "vue";
+import { useUserStore } from "@/stores/user";
+import axios from "axios";
+import { useRouter } from "vue-router";
 
-  const router = useRouter()
-  const store = useUserStore()
-  const user = ref({})
-  const favoriteMovies = ref([])
-  const reviews = ref([])
+const router = useRouter();
+const store = useUserStore();
+const user = ref({});
+const favoriteMovies = ref([]);
+const reviews = ref([]);
+const randomIndex = ref(0);
 
-  const MovieDetail = function(movieId) {
-    console.log(movieId)
-    router.push({name:'detail', params: {movieId: movieId}})
-  }
+const MovieDetail = function (movieId) {
+  console.log(movieId);
+  router.push({ name: "detail", params: { movieId: movieId } });
+};
 
-  const goDetail = function(reviewId) {
-    router.push({name:'reviewDetail', params:{reviewId:reviewId}})
-  }
+const goDetail = function (reviewId) {
+  router.push({ name: "reviewDetail", params: { reviewId: reviewId } });
+};
 
-
-  const favoriteMovie = function() {
-    axios({
-        method: "get",
-        url: `http://127.0.0.1:8000/api/v1/movies/${store.userId}/profile_favorite/`,
-        headers: {
-          Authorization: `Token ${store.token}`
-        }
-      }).then((response) => {
-        console.log(response)
-        favoriteMovies.value = response.data
-        console.log("프로필 찜한 영화 조회")
-      })
-        .catch((error) => {
-          console.log(error)
-      })
-  }
-  const userReview = function() {
-    axios({
-        method: "get",
-        url: `http://127.0.0.1:8000/api/v1_1/reviews/${store.userId}/`,
-        headers: {
-          Authorization: `Token ${store.token}`
-        }
-      }).then((response) => {
-        console.log(response)
-        reviews.value = response.data
-        console.log("유저 작성 리뷰 조회")
-      })
-        .catch((error) => {
-          console.log(error)
-      })
-  }
-
-  onMounted(() => {
-    store.profile()
-    user.value = store.user
-    favoriteMovie()
-    userReview()
+const favoriteMovie = function () {
+  axios({
+    method: "get",
+    url: `http://127.0.0.1:8000/api/v1/movies/${store.userId}/profile_favorite/`,
+    headers: {
+      Authorization: `Token ${store.token}`,
+    },
   })
+    .then((response) => {
+      console.log(response);
+      favoriteMovies.value = response.data;
+      console.log("프로필 찜한 영화 조회");
+      randomIndex.value = Math.floor(
+        Math.random() * favoriteMovies.value.length
+      );
+      console.log(randomIndex.value);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+const userReview = function () {
+  axios({
+    method: "get",
+    url: `http://127.0.0.1:8000/api/v1_1/reviews/${store.userId}/`,
+    headers: {
+      Authorization: `Token ${store.token}`,
+    },
+  })
+    .then((response) => {
+      console.log(response);
+      reviews.value = response.data;
+      console.log("유저 작성 리뷰 조회");
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+onMounted(() => {
+  store.profile();
+  user.value = store.user;
+  favoriteMovie();
+  userReview();
+});
 </script>
 
 <style scoped>
-.img {
-  width: 100px;
+.box {
+  width: 150px;
+  height: 150px;
+  bottom: 0;
+  left: 0;
+  transform: translateY(-40%);
 }
+.profile {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.img {
+  width: 50px;
+}
+
+/* 커버 이미지 */
+.cover-container {
+  width: 100%; /* 컨테이너의 너비를 100%로 설정 */
+  height: 35vh; /* 컨테이너의 높이를 뷰포트 높이의 50%로 설정 */
+  overflow: hidden; /* 컨테이너 밖의 이미지 부분 숨기기 */
+  position: relative; /* 이미지 위치 조정을 위한 상대 위치 설정 */
+}
+
+.cover-container img {
+  width: 100%; /* 이미지의 너비를 컨테이너에 맞춤 */
+  height: auto; /* 이미지의 비율을 유지 */
+  position: absolute; /* 절대 위치 설정 */
+  top: 0; /* 이미지를 컨테이너의 상단에 맞춤 */
+  transform: translateY(-25%);
+}
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.9) 90%,
+    rgba(0, 0, 0, 1) 98%
+  );
+  pointer-events: none;
+}
+
 .movie-card-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px; /* 카드 간격을 조정합니다 */
+  gap: 10px;
+  /* 카드 간격을 조정합니다 */
 }
 
 .movie-card {
   flex: 1 1 calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
   max-width: calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
-  margin: 10px; /* 카드 간격을 조정합니다 */
+  margin: 10px;
+  /* 카드 간격을 조정합니다 */
 }
 
 @media (max-width: 1200px) {
@@ -132,12 +258,12 @@
   height: 500px;
   border-radius: 8px;
   overflow: hidden;
-  margin: 100px auto;
-  transition: all 0.3s cubic-bezier(0.42, 0.0, 0.58, 1.0);
+  margin: 50px auto;
+  transition: all 0.3s cubic-bezier(0.42, 0, 0.58, 1);
 }
 
 #box:hover {
-  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   transform: translateY(-10px);
 }
 #box * {
@@ -147,9 +273,8 @@
 #box .img {
   display: block;
   width: inherit;
-  height: inherit;;
+  height: inherit;
   padding: 0;
-
 }
 #box .heading {
   font-size: 28px;
@@ -178,29 +303,27 @@
 }
 
 #box .texts {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 18px;
 }
 
 .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: inherit;
-            height: inherit;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            background: rgb(0, 0, 0, 0.5);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-	}
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: inherit;
+  height: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: rgb(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
 
 #box:hover .overlay {
-            opacity: 1;
-            pointer-events: auto;
-            
- 	}
-
+  opacity: 1;
+  pointer-events: auto;
+}
 </style>

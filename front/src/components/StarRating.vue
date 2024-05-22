@@ -7,7 +7,7 @@
       @click="setRating(n)"
       @mouseover="hoverRating(n)"
       @mouseleave="resetHoverRating"
-      class="star"
+      class="star fs-1"
       :class="{ filled: n <= (hoveredRating || rating) }"
     >★</span>
   </div>

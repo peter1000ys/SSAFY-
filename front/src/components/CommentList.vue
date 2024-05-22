@@ -1,18 +1,31 @@
 <template>
-  <div>
-    <p>
+  <div class="d-flex align-items-center justify-content-center fs-6">
+    <p class="mb-0">
       댓글 내용 : {{ comment.content }}
+      
     </p>
-    <button @click="commentLike()">
-      {{ commentLiked ? "좋아요 취소" : "좋아요" }}
-    </button>
-    <button @click="commentHate()">
-      {{ commentHated ? "싫어요 취소" : "싫어요" }}
-    </button>
-    <p>좋아요 수 : {{ commentLikeCount }}</p>
-    <p>싫어요 수 : {{ commentHateCount }}</p>
-    <hr>
+    <div class="buttons-container">
+      <button @click="commentLike()" class="like-button">
+        <span class="badge" v-if="commentLikeCount > 0">{{ commentLikeCount }}</span>
+        <i class="bi bi-hand-thumbs-up-fill icon-color" v-if="commentLiked"></i>
+        <i class="bi bi-hand-thumbs-up icon-color" v-else></i>
+        <span class="text-color" >{{ commentLiked ? "좋아요 취소" : "좋아요" }}</span>
+      </button>
+      <button @click="commentHate()" class="hate-button">
+        <span class="badge" v-if="commentHateCount > 0">{{ commentHateCount }}</span>
+        <i class="bi bi-hand-thumbs-down-fill icon-color" v-if="commentHated"></i>
+        <i class="bi bi-hand-thumbs-down icon-color" v-else></i>
+        <span class="text-color" >{{ commentHated ? "싫어요 취소" : "싫어요" }}</span>
+      </button>
+    
+    </div>
+    
+    <!-- <p>좋아요 수 : {{ commentLikeCount }}</p>
+    <p>싫어요 수 : {{ commentHateCount }}</p> -->
+    <!-- <hr class="border border-danger border-2 opacity-50"> -->
   </div>
+  <hr class="border border-danger border-2 opacity-30">
+
 </template>
 
 <script setup>
@@ -107,4 +120,46 @@ onMounted(() => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.icon-color {
+  font-size: 20px;
+  color: white;
+}
+.text-color {
+  font-size: 15px;
+  font-weight: 900;
+  color: white;
+}
+
+.buttons-container {
+  display: flex;
+  align-items: center;
+}
+
+button {
+  position: relative;
+  padding: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.like-button, .hate-button {
+  margin-right: 20px;
+}
+
+.badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  border-radius: 30%;
+  padding: 5px 10px;
+  font-size: 20px;
+  display: inline-block;
+}
+</style>

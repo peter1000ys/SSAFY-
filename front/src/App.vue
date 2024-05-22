@@ -36,9 +36,6 @@
   const store = useUserStore()
   const router = useRouter()
 
-  // 컴포넌트 확인용 movieId 변수 임시 할당
-  // const movieId = ref(1)
-
   // 로그아웃 함수
   const logout = function () {
     store.logout()
