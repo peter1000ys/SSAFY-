@@ -33,13 +33,16 @@ def review_list(request):
             return Response(serializer.data)
 
 
-@api_view(["GET",])
+@api_view(["GET","DELETE"])
 @permission_classes([IsAuthenticated])
 def review_detail(request, review_pk):
+    review = Review.objects.get(pk=review_pk)
     if request.method == "GET":
-        review = Review.objects.get(pk=review_pk)
         serializer = ReviewDetailSerializer(review)
         return Response(serializer.data)
+    if request.method == "DELETE":
+        review.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET", "POST"])
