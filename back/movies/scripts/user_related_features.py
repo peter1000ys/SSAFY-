@@ -24,7 +24,18 @@ def run():
             if movie_like_user not in movie.like_users.all():
                 movie.like_users.add(movie_like_user)
                 print(f"{movie}: Added to User {movie_like_user} likes")
-
+        # 영화별 싫어요 0~10개
+        for i in random.sample(range(1, target + 1), random.randint(0, 10)):
+            movie_hate_user = User.objects.get(pk=i)
+            if movie_hate_user not in movie.hate_users.all():
+                movie.hate_users.add(movie_hate_user)
+                print(f"{movie}: Added to User {movie_hate_user} hates")
+        # 영화별 찜 0~10개
+        for i in random.sample(range(1, target + 1), random.randint(0, 10)):
+            movie_favorite_user = User.objects.get(pk=i)
+            if movie_favorite_user not in movie.favorite_users.all():
+                movie.favorite_users.add(movie_favorite_user)
+                print(f"{movie}: Added to User {movie_favorite_user} favorites")
         # 영화별 리뷰 0~5개
         for i in range(random.randint(0, 5)):
             review_user = User.objects.get(pk=random.randint(1, target))
@@ -47,6 +58,16 @@ def run():
                 if review_like_user not in review.like_users.all():
                     review.like_users.add(review_like_user)
                     print(f"  {review}: Added to User {review_like_user} likes")
+                    
+            # 각 리뷰별 싫어요 0~5개
+            for i in random.sample(range(1, target + 1), random.randint(0, 5)):
+                review_hate_user = User.objects.get(pk=i)
+                if review.user == review_hate_user:
+                    continue
+
+                if review_hate_user not in review.hate_users.all():
+                    review.hate_users.add(review_hate_user)
+                    print(f"  {review}: Added to User {review_hate_user} hates")
 
             # 리뷰별 댓글 0~5개
             for i in range(random.randint(0, 5)):
@@ -67,4 +88,13 @@ def run():
                     if comment_like_user not in comment.like_users.all():
                         comment.like_users.add(comment_like_user)
                         print(f"      {comment}: Added to User {comment_like_user} likes")
+                # 각 댓글별 싫어요 0~5개
+                for i in random.sample(range(1, target + 1), random.randint(0, 5)):
+                    comment_hate_user = User.objects.get(pk=i)
+                    if comment.user == comment_hate_user:
+                        continue
+
+                    if comment_hate_user not in comment.hate_users.all():
+                        comment.hate_users.add(comment_hate_user)
+                        print(f"      {comment}: Added to User {comment_hate_user} hates")
         print()
