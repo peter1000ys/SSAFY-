@@ -1,6 +1,8 @@
 <template>
-  <div style="background-color: black;">
-
+  <div class="bg-black">
+    <div class="banner">
+      <BannerSlide />
+    </div>
     <!-- 메인 콘텐츠 -->
     <div v-if="userStore.isLogin" class="main-content">
       <div class="category-list">
@@ -110,14 +112,14 @@ import axios from 'axios'
 import Date from '@/components/Date.vue'
 import Korea from '@/components/Korea.vue'
 import Week from '@/components/Week.vue'
+import BannerSlide from '@/components/BannerSlide.vue'
 import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
 import { useRecommendStore } from '@/stores/recommend'
 import { onMounted, ref } from 'vue'
 import GenreRecommend from '@/components/GenreRecommend.vue'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import 'swiper/swiper-bundle.css';
+
 
 const store = useMovieStore()
 const userStore = useUserStore()
@@ -157,7 +159,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   padding: 0px 20px;
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 .category {
@@ -194,6 +196,10 @@ onMounted(() => {
 .img {
   width: 180px;
   height: 300px; /* 이미지 높이 추가 */
+}
+
+.banner img {
+  width: 100%;
 }
 
 .heading {

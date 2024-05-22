@@ -2,9 +2,10 @@
 <template>
   <div  @click="MovieDetail(movie.pk)">
     <div id="box">
-    <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
+    <img :src="`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`" class="img" alt="...">
     <div class="overlay">
       <h1 class="heading">{{ movie.title }}</h1>
+      <p><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</p>
       <div class="data">
         <!-- <span class="date">{{movie.release_date}}</span> -->
         <!-- <span class="user-id">{{ movie.overview }}</span> -->
@@ -35,10 +36,12 @@ const MovieDetail = function(movieId) {
 <style scoped>
 #box {
   width: 300px;
-  height: 500px;
+  height: 200px;
   border-radius: 8px;
   overflow: hidden;
-  margin: 100px auto;
+  
+  margin: 50px;
+  margin-top: 10px;
   transition: all 0.3s cubic-bezier(0.42, 0.0, 0.58, 1.0);
 }
 
@@ -108,6 +111,12 @@ const MovieDetail = function(movieId) {
             pointer-events: auto;
             
  	}
+  p {
+    color: white;
+  }
+  p i {
+    color: yellow;
+  }
 </style>
 
 

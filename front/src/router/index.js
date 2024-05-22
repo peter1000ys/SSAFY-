@@ -8,7 +8,7 @@ import CommunityView from '@/views/CommunityView.vue'
 import ReviewDetailView from '@/views/ReviewDetailView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import SearchView from '@/views/SearchView.vue'
-
+import SearchModalView from '@/views/SearchView.vue'
 import RelatedMovie from '@/components/RelatedMovie.vue'
 import ReviewList from '@/components/ReviewList.vue'
 import Genre from '@/components/Genre.vue'
@@ -41,11 +41,13 @@ const router = createRouter({
       path: '/movies/',
       name: 'list',
       component: MovieListView,
-    },
-    {
-      path: '/genre/:genreId/',
-      name: 'genre',
-      component: Genre,
+      children:[
+        {
+          path: '/:genreId',
+          name: 'genre',
+          component: Genre,
+        },
+      ]
     },
     {
       path: '/:movieId',
@@ -92,7 +94,7 @@ const router = createRouter({
       path: '/search',
       name: 'search',
       component: SearchView
-    }
+    },
   ]
 })
 

@@ -10,19 +10,28 @@
         </div>
         <div class="menu">
           <div class="search">
-            <i class="fa-solid fa-magnifying-glass fa-2x" style="color: #ffffff;"></i>
+            <i class="bi bi-search" style="color: #ffffff;" @click="openSearchModal"></i>
           </div>
           <div v-if="!store.isLogin">
-            <RouterLink :to="{ name:'signup'}">회원가입</RouterLink>
-            <span> | </span>
+            <RouterLink :to="{ name:'signup'}" style="padding-right: 40px;">회원가입</RouterLink>
             <RouterLink :to="{ name:'login'}">로그인</RouterLink>
           </div>
           <div v-else>
             <a @click="logout" style="padding: 20px;">로그아웃</a>
+            <RouterLink :to="{ name:'profile'}">프로필</RouterLink>
           </div>
-          <RouterLink :to="{ name:'profile'}">프로필</RouterLink>
         </div>
       </header>
+      <div v-if="isSearchModalOpen" class="modal-overlay" @click.self="closeSearchModal">
+        <div class="modal-content">
+          <div>
+            <button class="close-button" @click="closeSearchModal">X</button>
+          </div>
+          <div>
+            <SearchModal @close="closeSearchModal" :close-modal="closeSearchModal" />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <RouterView/>
@@ -32,13 +41,23 @@
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router'
+import SearchModal from '@/components/SearchModal.vue'
 
 const store = useUserStore()
 const router = useRouter()
+const isSearchModalOpen = ref(false)
 
 const logout = function () {
   store.logout()
   router.push({ name: 'login' })
+}
+
+const openSearchModal = () => {
+  isSearchModalOpen.value = true
+}
+
+const closeSearchModal = () => {
+  isSearchModalOpen.value = false
 }
 </script>
 
@@ -96,5 +115,40 @@ a {
 .home {
   background-color: black; /* 배경을 검정색으로 설정 */
   padding-top: 80px; /* 네비게이션 바 공간 확보 */
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* 상단에 정렬 */
+  z-index: 1100; /* 네비게이션 바 위에 위치 */
+
+}
+
+.modal-content {
+  background-color: rgb(0, 0, 0);
+  padding: 10px;
+  border-radius: 3px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 </style>

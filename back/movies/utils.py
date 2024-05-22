@@ -37,6 +37,10 @@ def fetch_and_save_movies():
             for movie_data in movies_data:
                 movie_genre = movie_data['genre_ids']
                 movie_rd = movie_data['release_date']
+                if  movie_data['id'] == 699172:
+                    continue
+                if movie_data['id'] == 504903:
+                    continue
                 if not movie_data['genre_ids']:
                     continue
                 if movie_data['release_date'] == "":

@@ -179,9 +179,6 @@ def today_recommend(request):
 def korean_movies(request):
     movies = get_list_or_404(Movie, original_language = 'ko')
     movies = sorted(movies, key=lambda x: (x.popularity, x.release_date), reverse=True)
-    for movie in movies:
-        if movie.pk == 504903 or  movie.pk == 699172:
-            movies.remove(movie)
     movies = movies[:18]
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
@@ -285,6 +282,7 @@ def search(request):
             'title': movie.title,
             'overview': movie.overview,
             'poster_path': movie.poster_path,
+            'backdrop_path': movie.backdrop_path,
             'genres': [genre.name for genre in movie.genres.all()],
             } for movie in movies]
         return JsonResponse({'results': results})

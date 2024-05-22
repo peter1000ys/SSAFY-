@@ -146,6 +146,10 @@ store.read_lhf(route.params.movieId)
 onMounted(() => {
   fetchMovieDetails(route.params.movieId)
 })
+watch(() => route.params.movieId, (newMovieId) => {
+  fetchMovieDetails(newMovieId)
+})
+
 
 onBeforeRouteLeave((to, from) => {
   store.movieVideoKey = ''
