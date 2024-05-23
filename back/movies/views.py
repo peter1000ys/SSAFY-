@@ -2,16 +2,16 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import MovieListSerializer, MovieSerializer, GenreListSerializer,GenreMoviesSerializer
+from .serializers import MovieListSerializer, MovieSerializer, GenreListSerializer,GenreMoviesSerializer, MovieReadSerializer,MovieRelatedSerializer
 from .models import Movie,Genre
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.views import APIView
 from rest_framework import status
-from .utils import fetch_and_save_movies, fetch_and_save_genres, delete_movies_without_trailers
+from .utils import fetch_and_save_movies, fetch_and_save_genres, delete_movies_without_trailers, get_movies_related
 from accounts.models import User
 from datetime import datetime
 import random
-
+import requests
 
 # 영화 리스트 조회
 @api_view(['GET', 'POST'])
@@ -170,7 +170,7 @@ def today_recommend(request):
     # movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:10]
     movies = get_list_or_404(Movie.objects.filter(genres__in=today_genres))
     movies = list(set(movies))
-    movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:9]
+    movies = sorted(movies, key=lambda x: x.vote_average, reverse=True)[:9]
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
@@ -191,14 +191,6 @@ def week_recommend(request):
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
-# # 비슷한 콘텐츠
-# @api_view(['GET'])
-# def similar_movies(request, movie_pk):
-#     movie = get_object_or_404(Movie, pk=movie_pk)
-#     genres = movie.genres.all()
-#     movies = get_list_or_404(Movie.objects.filter(genres__in=genres)[:24])
-#     serializers = MovieListSerializer(movies, many=True)
-#     return Response(serializers.data)
 
 # 좋아요 한 장르 별 영화 가져오기
 @api_view(['POST'])
@@ -207,14 +199,13 @@ def liked_genres_with_movies(request, user_pk):
     user = get_object_or_404(User, pk=user_pk)
     liked_movies = user.like_movies.all()
     genres_dict = {}
-
     for movie in liked_movies:
         for genre in movie.genres.all():
             if genre not in genres_dict:
                 genres_dict[genre] = []
     
     for genre in genres_dict:
-        genre_movies = Movie.objects.filter(genres=genre).order_by('-popularity')[:30]
+        genre_movies = Movie.objects.filter(genres=genre).order_by('-popularity')[:27]
         genres_dict[genre] = genre_movies
 
     data = {genre.name: GenreMoviesSerializer({'genre': genre, 'movies': movies}).data for genre, movies in genres_dict.items()}
@@ -237,7 +228,7 @@ def user_recommend(request, user_pk):
     
     movies = get_list_or_404(Movie.objects.filter(genres__in=genres))
     movies = list(set(movies))
-    movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:30]
+    movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:27]
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 
@@ -289,7 +280,26 @@ def search(request):
     return JsonResponse({'results': []})
 
 
+@api_view(['GET'])
+def related_movies(request, movie_pk):
+    url = f"https://api.themoviedb.org/3/movie/{movie_pk}/recommendations?language=ko-KR&page=1"
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5OTZjYzI3NTQ1MmIyOGE2NWQ1NmZkZTA5Njk0MWM4NCIsInN1YiI6IjY2M2Q4Y2UwMGYyYzdjMTlhNmM3NWI1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2XhNWrsPvokdXhVEWX5ZHBctmKl7y5WckUfnppu6nIE"
+    }
 
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        api_movies = response.json().get('results', [])
+        tmdb_ids = [movie['id'] for movie in api_movies]
+        
+        matching_movies = Movie.objects.filter(tmdb_id__in=tmdb_ids)
+        serializer = MovieSerializer(matching_movies, many=True)
+        
+        return Response(serializer.data)
+    else:
+        return Response({"error": "Failed to fetch data from the API"}, status=response.status_code)
 
 
 # TMDB에서 장르 가져오기 위한 view함수

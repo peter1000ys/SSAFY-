@@ -1,24 +1,6 @@
 <template>
   <div>
     <GenreButtons />
-
-    
-    <div>
-      <input v-model="query" @input="searchMovies" placeholder="Search for a movie" class="search-input"/>
-      <div v-if="movies.length">
-        <div class="movie-card-container">
-          <div v-for="movie in paginatedMovies" :key="movie.id" class="movie-card" @click="MovieDetail(movie.tmdb_id)">
-            <GenreMovieCard :movie="movie" />
-          </div>
-        </div>
-        <div class="pagination">
-          <button @click="prevPage" :disabled="currentPage === 1">이전</button>
-          <span>{{ currentPage }} / {{ totalPages }}</span>
-          <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
-        </div>
-      </div>
-    </div>
-    <div v-if="!query">
       <div v-if="!$route.params.genreId">
         <div v-if="store.movies">
           <div class="movie-card-container">
@@ -26,16 +8,23 @@
               <GenreMovieCard :movie="movie" />
             </div>
           </div>
-          <div class="pagination">
-            <button @click="prevStorePage" :disabled="currentStorePage === 1">이전</button>
-            <span>{{ currentStorePage }} / {{ totalStorePages }}</span>
-            <button @click="nextStorePage" :disabled="currentStorePage === totalStorePages">다음</button>
-          </div>
+          <nav aria-label="Page navigation example" class="pagination-nav">
+            <ul class="pagination justify-content-center">
+              <li class="page-item px-3" :class="{ disabled: currentStorePage === 1 }">
+                <a class="page-link" href="#" @click.prevent="prevStorePage" tabindex="-1" :aria-disabled="currentStorePage === 1">Previous</a>
+              </li>
+              <li class="page-item px-3" v-for="page in totalStorePages" :key="page" :class="{ active: currentStorePage === page }">
+                <a class="page-link" href="#" @click.prevent="goToStorePage(page)">{{ page }}</a>
+              </li>
+              <li class="page-item px-3" :class="{ disabled: currentStorePage === totalStorePages }">
+                <a class="page-link" href="#" @click.prevent="nextStorePage" :aria-disabled="currentStorePage === totalStorePages">Next</a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
     <RouterView />
-  </div>
 </template>
 
 <script setup>
@@ -44,59 +33,14 @@ import GenreMovieCard from '@/components/GenreMovieCard.vue';
 import { useMovieStore } from '@/stores/movie';
 import { onMounted, ref, computed } from 'vue';
 import { RouterView } from 'vue-router';
-import axios from 'axios';
-import { useRouter } from 'vue-router'
 
-const query = ref('');
-const movies = ref([]);
-const currentPage = ref(1);
-const itemsPerPage = 10;
+
 
 const currentStorePage = ref(1);
-const itemsPerStorePage = 10;
+const itemsPerStorePage = 15;
 
-const router = useRouter();
 
-const MovieDetail = function(movieId) {
-  console.log(movieId);
-  router.push({ name: 'detail', params: { movieId: movieId } });
-};
 
-const searchMovies = async () => {
-  if (query.value.length >= 1) {
-    try {
-      const response = await axios.get('http://127.0.0.1:8000/api/v1/search/', {
-        params: {
-          query: query.value
-        }
-      });
-      movies.value = response.data.results;
-      currentPage.value = 1; // Reset to first page on new search
-    } catch (error) {
-      console.error('영화 정보를 가져오는 중 오류 발생:', error);
-    }
-  } else {
-    movies.value = [];
-  }
-};
-
-const paginatedMovies = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  return movies.value.slice(start, end);
-});
-
-const totalPages = computed(() => {
-  return Math.ceil(movies.value.length / itemsPerPage);
-});
-
-const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--;
-};
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++;
-};
 
 const store = useMovieStore();
 
@@ -116,6 +60,10 @@ const prevStorePage = () => {
 
 const nextStorePage = () => {
   if (currentStorePage.value < totalStorePages.value) currentStorePage.value++;
+};
+
+const goToStorePage = (page) => {
+  currentStorePage.value = page;
 };
 
 onMounted(() => {
@@ -143,6 +91,7 @@ onMounted(() => {
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px; /* 카드 간격을 조정합니다 */
+  margin-top: 70px;
 }
 
 .movie-card {
@@ -177,16 +126,25 @@ onMounted(() => {
   width: 100px;
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
+.pagination-nav {
+  margin-top: 100px; /* 페이지 네비게이션을 30px 아래로 내립니다 */
 }
-button a{
-  text-decoration-line: none;
-  color: white;
+
+.page-item.active .page-link {
+  background-color: #000000; /* Bootstrap의 Danger 색상 */
+  border-color: #dc3545;
+  color: rgb(255, 0, 0);
+}
+
+.page-link {
+  color: rgb(255, 255, 255); /* 눌리지 않았을 때 검정색 */
+  background-color: black;
+  border-color: black;
+}
+.page-item.disabled .page-link {
+  background-color: #000000; /* 비활성화된 버튼의 배경색 */
+  color: #6c757d; /* 비활성화된 버튼의 텍스트 색상 */
+  pointer-events: none; /* 클릭 불가 */
+  border-color: black;
 }
 </style>
-

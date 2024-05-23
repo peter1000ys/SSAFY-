@@ -9,7 +9,7 @@
         <div v-if="store.favoriteMovies.length">
           <div class="category">
             <h3 class="title">찜한 영화 목록</h3>
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div id="favoriteCarousel" class="carousel slide" data-bs-ride="carousel">
               <div class="carousel-inner">
                 <div v-for="(movieGroup, index) in chunkArray(store.favoriteMovies, 9)" :class="['carousel-item', { active: index === 0 }]" :key="index">
                   <div class="d-flex">
@@ -141,9 +141,11 @@ const chunkArray = (array, size) => {
 }
 
 onMounted(() => {
+  RecStore.userRecommendMovies = []
   RecStore.getLikedGenresWithMovies(userStore.userId)
   store.myFavoriteMovie()
   RecStore.userRecommend()
+  RecStore.clearLikedGenres()
 })
 </script>
 

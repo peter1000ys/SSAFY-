@@ -41,6 +41,7 @@ def run():
             review_user = User.objects.get(pk=random.randint(1, target))
             review = Review.objects.create(
                 user=review_user,
+                username=review_user.username,
                 movie_title=movie.title,
                 title=fake.sentence(nb_words=10),
                 content=fake.paragraph(nb_sentences=5),

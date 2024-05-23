@@ -6,11 +6,22 @@
         <GenreMovieCard :movie="movie" />
       </div>
     </div>
-    <div class="pagination">
-      <button @click="prevPage" :disabled="currentPage === 1">이전</button>
-      <span>{{ currentPage }} / {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
-    </div>
+    <nav aria-label="Page navigation example" class="pagination-nav">
+      <ul class="pagination justify-content-center">
+        <li class="page-item px-3" :class="{ disabled: currentPage === 1 }">
+          <a class="page-link" href="#" @click.prevent="prevPage" tabindex="-1" :aria-disabled="currentPage === 1">Previous</a>
+        </li>
+        <li v-if="totalPages <= 10" class="page-item px-3" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page }">
+          <a class="page-link" href="#" @click.prevent="goToPage(page)">{{ page }}</a>
+        </li>
+        <li v-else class="page-item px-3">
+          <a class="page-link" href="#">{{ currentPage }} / {{ totalPages }}</a>
+        </li>
+        <li class="page-item px-3" :class="{ disabled: currentPage === totalPages }">
+          <a class="page-link" href="#" @click.prevent="nextPage" :aria-disabled="currentPage === totalPages">Next</a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
@@ -25,7 +36,7 @@ const genreId = ref(route.params.genreId);
 const store = useMovieStore();
 const genreName = ref('');
 const currentPage = ref(1);
-const itemsPerPage = 10;
+const itemsPerPage = 15;
 
 watch(() => route.params.genreId, (newId) => {
   genreId.value = newId;
@@ -63,6 +74,10 @@ const nextPage = () => {
   if (currentPage.value < totalPages.value) currentPage.value++;
 };
 
+const goToPage = (page) => {
+  currentPage.value = page;
+};
+
 onMounted(() => {
   fetchMovies();
   updateGenreName();
@@ -72,17 +87,22 @@ onMounted(() => {
 <style scoped>
 .genre-title {
   color: white;
-  margin-left: 200px;
+  margin-left: 130px;
+  margin-top: 70px;
 }
+
 .movie-card-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: center; /* 카드들을 가운데 정렬 */
   gap: 10px; /* 카드 간격을 조정합니다 */
+
 }
 
 .movie-card {
   height: 200px;
+  width: 300px;
+  gap: 3px;
   flex: 1 1 calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
   max-width: calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
   margin: 10px; /* 카드 간격을 조정합니다 */
@@ -104,7 +124,7 @@ onMounted(() => {
 
 @media (max-width: 480px) {
   .movie-card {
-    flex: 1 1 calc(50% - 20px); /* 2개의 열로 조정 */
+    flex: 1 1 calc(100% - 20px); /* 2개의 열로 조정 */
     max-width: calc(50% - 20px);
   }
 }
@@ -113,11 +133,25 @@ onMounted(() => {
   width: 100px;
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
+.pagination-nav {
+  margin-top: 100px; /* 페이지 네비게이션을 30px 아래로 내립니다 */
+}
+
+.page-item.active .page-link {
+  background-color: #000000; /* Bootstrap의 Danger 색상 */
+  border-color: #dc3545;
+  color: rgb(255, 0, 0);
+}
+
+.page-link {
+  color: rgb(255, 255, 255); /* 눌리지 않았을 때 검정색 */
+  background-color: black;
+  border-color: black;
+}
+.page-item.disabled .page-link {
+  background-color: #000000; /* 비활성화된 버튼의 배경색 */
+  color: #6c757d; /* 비활성화된 버튼의 텍스트 색상 */
+  pointer-events: none; /* 클릭 불가 */
+  border-color: black;
 }
 </style>

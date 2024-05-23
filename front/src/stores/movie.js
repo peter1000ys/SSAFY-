@@ -68,6 +68,7 @@ export const useMovieStore = defineStore('movie', () => {
     axios
     .request(options)
     .then(function (response) {
+        movieVideoKey.value = ''
         movie.value = response.data
 
         return movie.value.id
@@ -156,15 +157,10 @@ export const useMovieStore = defineStore('movie', () => {
   const getSimilar = (movieId) => {
     axios({
       method: 'GET',
-      url: `https://api.themoviedb.org/3/movie/${movieId}/recommendations?language=ko-KR&page=1`,
-      headers: {
-          accept: 'application/json',
-          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5OTZjYzI3NTQ1MmIyOGE2NWQ1NmZkZTA5Njk0MWM4NCIsInN1YiI6IjY2M2Q4Y2UwMGYyYzdjMTlhNmM3NWI1ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2XhNWrsPvokdXhVEWX5ZHBctmKl7y5WckUfnppu6nIE'
-      }
-  
+      url: `http://127.0.0.1:8000/api/v1/movies/${movieId}/related/`,
     })
     .then((res) => {
-          similarMovies.value = res.data['results']
+          similarMovies.value = res.data
           console.log(res.data)
 
         })

@@ -42,3 +42,9 @@ class MovieReadSerializer(serializers.ModelSerializer):
         model = Movie
         fields = ('tmdb_id', 'title', 'overview','release_date','poster_path','vote_count','vote_average','backdrop_path', 'adult', 'genres', 'popularity', 'original_language')
         # fields = '__all__'
+
+
+class MovieRelatedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields = ['tmdb_id', 'title', 'overview', 'release_date', 'poster_path']

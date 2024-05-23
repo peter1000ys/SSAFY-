@@ -38,7 +38,8 @@
 <script setup>
 import { useRecommendStore } from '@/stores/recommend';
 import { useMovieStore } from '@/stores/movie';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+import { onMounted, onUnmounted, ref } from 'vue';
 const router = useRouter()
 const recStore = useRecommendStore();
 const store = useMovieStore()
@@ -53,6 +54,36 @@ const MovieDetail = function(movieId) {
     console.log(movieId)
     router.push({name:'detail', params: {movieId: movieId}})
   }
+  const isActive = ref(false);
+let intervalId = null;
+
+const startAutoSlide = () => {
+  intervalId = setInterval(() => {
+    const carouselElement = document.querySelector('#carouselExampleDark');
+    if (carouselElement) {
+      const bsCarousel = new bootstrap.Carousel(carouselElement);
+      bsCarousel.next();
+    }
+  }, 5000);
+};
+
+
+const stopAutoSlide = () => {
+  clearInterval(intervalId);
+};
+
+onMounted(() => {
+  if (!isActive.value) {
+    startAutoSlide();
+    isActive.value = true;
+  }
+});
+
+onUnmounted(() => {
+  stopAutoSlide();
+  isActive.value = false;
+});
+
 </script>
 
 <style scoped>
