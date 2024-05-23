@@ -71,31 +71,42 @@ onMounted(() => {
 }
 
 .movie-card {
-  flex: 1 1 calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
-  max-width: calc(16.666% - 20px); /* 6개의 열을 기본으로 합니다 */
+  width: 300px; /* 고정 너비 */
+  height: 200px; /* 고정 높이 */
   margin: 10px; /* 카드 간격을 조정합니다 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* 이미지가 카드 크기를 넘지 않도록 */
+}
+
+.movie-card img {
+  width: 100%; /* 이미지가 카드 너비에 맞게 조정 */
+  height: 100%; /* 이미지가 카드 높이에 맞게 조정 */
+  object-fit: cover; /* 이미지 비율을 유지하며 카드 크기에 맞춤 */
 }
 
 @media (max-width: 1200px) {
   .movie-card {
-    flex: 1 1 calc(25% - 20px); /* 4개의 열로 조정 */
-    max-width: calc(25% - 20px);
+    width: 25%; /* 4개의 열로 조정 */
+    height: auto; /* 높이를 자동으로 */
   }
 }
 
 @media (max-width: 768px) {
   .movie-card {
-    flex: 1 1 calc(33.333% - 20px); /* 3개의 열로 조정 */
-    max-width: calc(33.333% - 20px);
+    width: 33.333%; /* 3개의 열로 조정 */
+    height: auto; /* 높이를 자동으로 */
   }
 }
 
 @media (max-width: 480px) {
   .movie-card {
-    flex: 1 1 calc(50% - 20px); /* 2개의 열로 조정 */
-    max-width: calc(50% - 20px);
+    width: 50%; /* 2개의 열로 조정 */
+    height: auto; /* 높이를 자동으로 */
   }
 }
+
 .pagination-nav {
   margin-top: 100px; /* 페이지 네비게이션을 30px 아래로 내립니다 */
 }

@@ -17,7 +17,7 @@
             <RouterLink :to="{ name:'login'}">로그인</RouterLink>
           </div>
           <div v-else>
-            <a @click="logout" style="padding: 20px;">로그아웃</a>
+            <a @click="logout" style="padding: 20px;  cursor: pointer;">로그아웃</a>
             <RouterLink :to="{ name:'profile'}">프로필</RouterLink>
             <div class="Chat">
               <i class="bi bi-chat-right-quote-fill text-red" @click="openChatModal"></i>
@@ -41,7 +41,7 @@
             <button class="close-chat" @click="closeChatModal"><i class="bi bi-x-circle-fill"></i></button>
           </div>
           <div>
-            <Chatbot @close="closeChatModal" :close-modal="closeChatModal" />
+            <chatbot @close="closeChatModal" :close-modal="closeChatModal" />
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@ import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import SearchModal from '@/components/SearchModal.vue';
-import Chatbot from '@/components/Chatbot.vue';
+import chatbot from '@/components/chatbot.vue';
 
 const store = useUserStore()
 const router = useRouter()
@@ -127,6 +127,7 @@ a {
 
 .menu .search {
   padding-right: 30px;
+  cursor: pointer;
 }
 
 .profile {
@@ -216,5 +217,6 @@ a {
   bottom: 30px;
   right: 50px;
   font-size: xx-large;
+  cursor: pointer;
 }
 </style>

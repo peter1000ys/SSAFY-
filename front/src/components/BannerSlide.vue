@@ -37,12 +37,12 @@
 
 <script setup>
 import { useRecommendStore } from '@/stores/recommend';
-import { useMovieStore } from '@/stores/movie';
+
 import { useRouter } from 'vue-router';
 import { onMounted, onUnmounted, ref } from 'vue';
 const router = useRouter()
 const recStore = useRecommendStore();
-const store = useMovieStore()
+
 const truncateText = (text, limit) => {
   if (text.length <= limit) {
     return text;

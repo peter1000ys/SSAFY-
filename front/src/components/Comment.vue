@@ -11,7 +11,7 @@
           id="content"
           v-model="content"
         />
-        <button class="ms-2 btn btn-outline-success" type="submit">
+        <button class="ms-2 btn btn-outline-danger" type="submit">
           댓글 작성
         </button>
       </div>

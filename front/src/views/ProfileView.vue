@@ -32,10 +32,10 @@
     </div>
 
     <!-- 작성한 리뷰 목록 -->
-    <div class="mt-5" v-if="reviews.length">
+    <div class="mt-5" v-if="paginatedReviews.length">
       <h2 class="font">작성한 리뷰 목록</h2>
       <div class="movie-card-container">
-        <div v-for="review in reviews" :key="review.id">
+        <div v-for="review in paginatedReviews" :key="review.id">
           <div id="box">
             <img
               :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`"
@@ -63,14 +63,27 @@
           </div>
         </div>
       </div>
+      <nav aria-label="Page navigation example" class="pagination-nav">
+        <ul class="pagination justify-content-center">
+          <li class="page-item px-3" :class="{ disabled: currentPageReviews === 1 }">
+            <a class="page-link" href="#" @click.prevent="prevPageReviews" tabindex="-1" :aria-disabled="currentPageReviews === 1">Previous</a>
+          </li>
+          <li class="page-item px-3" v-for="page in totalPagesReviews" :key="page" :class="{ active: currentPageReviews === page }">
+            <a class="page-link" href="#" @click.prevent="goToPageReviews(page)">{{ page }}</a>
+          </li>
+          <li class="page-item px-3" :class="{ disabled: currentPageReviews === totalPagesReviews }">
+            <a class="page-link" href="#" @click.prevent="nextPageReviews" :aria-disabled="currentPageReviews === totalPagesReviews">Next</a>
+          </li>
+        </ul>
+      </nav>
     </div>
 
     <!-- 찜한 영화 목록 -->
-    <div class="mt-5" v-if="favoriteMovies.length">
+    <div class="mt-5" v-if="paginatedFavoriteMovies.length">
       <h2 class="font">찜한 영화 목록</h2>
       <div class="movie-card-container">
-        <div v-for="movie in favoriteMovies" :key="movie.id">
-          <div id="box" >
+        <div v-for="movie in paginatedFavoriteMovies" :key="movie.id">
+          <div id="box">
             <img
               :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
               class="img"
@@ -87,12 +100,25 @@
           </div>
         </div>
       </div>
+      <nav aria-label="Page navigation example" class="pagination-nav">
+        <ul class="pagination justify-content-center">
+          <li class="page-item px-3" :class="{ disabled: currentPageFavorites === 1 }">
+            <a class="page-link" href="#" @click.prevent="prevPageFavorites" tabindex="-1" :aria-disabled="currentPageFavorites === 1">Previous</a>
+          </li>
+          <li class="page-item px-3" v-for="page in totalPagesFavorites" :key="page" :class="{ active: currentPageFavorites === page }">
+            <a class="page-link" href="#" @click.prevent="goToPageFavorites(page)">{{ page }}</a>
+          </li>
+          <li class="page-item px-3" :class="{ disabled: currentPageFavorites === totalPagesFavorites }">
+            <a class="page-link" href="#" @click.prevent="nextPageFavorites" :aria-disabled="currentPageFavorites === totalPagesFavorites">Next</a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useUserStore } from "@/stores/user";
 import axios from "axios";
 import { useRouter } from "vue-router";
@@ -103,6 +129,49 @@ const user = ref({});
 const favoriteMovies = ref([]);
 const reviews = ref([]);
 const randomIndex = ref(0);
+
+const currentPageReviews = ref(1);
+const currentPageFavorites = ref(1);
+const itemsPerPage = 8;
+
+const paginatedReviews = computed(() => {
+  const start = (currentPageReviews.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return reviews.value.slice(start, end);
+});
+
+const paginatedFavoriteMovies = computed(() => {
+  const start = (currentPageFavorites.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return favoriteMovies.value.slice(start, end);
+});
+
+const totalPagesReviews = computed(() => Math.ceil(reviews.value.length / itemsPerPage));
+const totalPagesFavorites = computed(() => Math.ceil(favoriteMovies.value.length / itemsPerPage));
+
+const prevPageReviews = () => {
+  if (currentPageReviews.value > 1) currentPageReviews.value--;
+};
+
+const nextPageReviews = () => {
+  if (currentPageReviews.value < totalPagesReviews.value) currentPageReviews.value++;
+};
+
+const goToPageReviews = (page) => {
+  currentPageReviews.value = page;
+};
+
+const prevPageFavorites = () => {
+  if (currentPageFavorites.value > 1) currentPageFavorites.value--;
+};
+
+const nextPageFavorites = () => {
+  if (currentPageFavorites.value < totalPagesFavorites.value) currentPageFavorites.value++;
+};
+
+const goToPageFavorites = (page) => {
+  currentPageFavorites.value = page;
+};
 
 // 영화 상세페이지 이동
 const MovieDetail = function (movieId) {
@@ -333,25 +402,25 @@ onMounted(() => {
   pointer-events: auto;
 }
 
-</style>
+.pagination-nav {
+  margin-top: 30px; /* 페이지 네비게이션을 30px 아래로 내립니다 */
+}
 
-      <!-- <div class="d-flex">
-        <div v-for="review in reviews">
-          <div class="d-flex ">
-            <img
-              class="img"
-              :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`"
-              alt="..."
-            />
-            <div>
-              <p class="mb-1" @click.prevent="goDetail(review.id)">
-                {{ review.movie_title }}
-              </p>
-              <p @click.prevent="goDetail(review.id)">
-                리뷰 내용 : {{ review.content }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr/> -->
+.page-item.active .page-link {
+  background-color: #000000; /* Bootstrap의 Danger 색상 */
+  border-color: #dc3545;
+  color: rgb(255, 0, 0);
+}
+
+.page-link {
+  color: rgb(255, 255, 255); /* 눌리지 않았을 때 검정색 */
+  background-color: black;
+  border-color: black;
+}
+.page-item.disabled .page-link {
+  background-color: #000000; /* 비활성화된 버튼의 배경색 */
+  color: #6c757d; /* 비활성화된 버튼의 텍스트 색상 */
+  pointer-events: none; /* 클릭 불가 */
+  border-color: black;
+}
+</style>

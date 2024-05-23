@@ -77,9 +77,6 @@ const router = createRouter({
           router.push({name: 'login'})
         }
       },
-      children:[
-        {path:'create', name:'create', component:ReviewCreate},
-      ]
     },
     {
       path: '/community/:reviewId',

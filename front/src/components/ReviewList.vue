@@ -43,8 +43,8 @@
 }
 
 .card {
-  background-color: #fff;
-  border: 1px solid #ccc;
+  color: rgb(165, 165, 165);
+  background-color: #1f1f1f;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -56,6 +56,8 @@
 
 .card:hover {
   transform: translateY(-10px);
+  border: 1px solid #ff0000;
+  color: white;
 }
 
 .card p {

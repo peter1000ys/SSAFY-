@@ -1,60 +1,57 @@
-<template >
-  <div class="s-container">
-    <div class="d-flex align-items-start justify-content-center">
-      <div>
-        <img
-          class="img"
-          :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`"
-          alt="..."
-        />
-      </div>
-      <div class="ms-4 fs-6">
-        <p>영화 제목 : {{ review.movie_title }}</p>
-        <p>리뷰 제목 : {{ review.title }}</p>
-        <p>리뷰 내용 : {{ review.content }}</p>
-        <p>작성자 : {{ review.username }}</p>
-        <p class="fs-4"><i class="bi bi-star-fill star"></i> {{ review.rank }}</p>
-        <br>
-      <div class="buttons-container">
-        <button @click="reviewLike()" class="like-button">
-          <span class="badge" v-if="reviewLikeCount > 0">{{ reviewLikeCount }}</span>
-          <i class="bi bi-hand-thumbs-up-fill icon-color" v-if="reviewLiked"> </i>
-          <i class="bi bi-hand-thumbs-up icon-color" v-else> </i>
-        </button>
-        <button @click="reviewHate()" class="hate-button">
-          <span class="badge" v-if="reviewHateCount > 0">{{ reviewHateCount }}</span>
-          <i class="bi bi-hand-thumbs-down-fill icon-color" v-if="reviewHated"> </i>
-          <i class="bi bi-hand-thumbs-down icon-color" v-else> </i>
-        </button>
-        <div v-if="review.user === store.userId">
-          <button class="btn btn-outline-danger" @click="reviewDelete">리뷰 삭제</button>
-        </div>
+<template>
+  <div class="post-container">
+    <div class="post-header">
+      <img class="profile-pic" src="@/assets/profile.jpg" alt="Profile Picture" />
+      <div class="user-info">
+        <p class="username">{{ review.username }}</p>
       </div>
     </div>
-  </div>
-  <div v-if="review.user === store.userId">
-    <hr class="border border-danger border-2 opacity-50">
-    <h3 class="text-center">리뷰 수정</h3>
-    <RevieUpdate :review="review" />
-  </div>
-    <div class="">
-      <hr class="border border-danger border-2 opacity-50">
-      <hr class="border border-danger border-2 opacity-30">
-      <h3 class="fs-5 mb-4 font text-center">댓글 목록</h3>
-      <hr class="border border-danger border-2 opacity-30">
-      
+    <img class="post-image" :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`" alt="Post Image" />
+    <div class="post-actions">
+      <div>
+        <i class="bi bi-hand-thumbs-up-fill icon-color" @click="reviewLike()" v-if="reviewLiked"></i>
+        <i class="bi bi-hand-thumbs-up icon-color" @click="reviewLike()" v-else></i>
+      </div>
+      <div>
+        <i class="bi bi-hand-thumbs-down-fill icon-color" @click="reviewHate()" v-if="reviewHated"></i>
+        <i class="bi bi-hand-thumbs-down icon-color" @click="reviewHate()" v-else></i>
+      </div>
+      <div v-if="review.user === store.userId" class="button-item">
+        <i class="bi bi-trash trash icon-color" @click="reviewDelete" style="cursor: pointer;"></i>
+      </div>
+      <div v-if="review.user === store.userId">
+        <i class="bi bi-pencil-square icon-color" @click="openReviewUpdateModal"></i>
+      </div>
+    </div>
+    <div class="post-likes">
+      <p>좋아요 {{ reviewLikeCount }}개&nbsp;&nbsp; 싫어요 {{ reviewHateCount }}개&nbsp;&nbsp;&nbsp;&nbsp;<i class="bi bi-star-fill star"></i>&nbsp;&nbsp;{{ review.rank }}</p>
+
+    </div>
+    <div class="post-content">
+      <h2>{{ review.title }}</h2>
+      <p>{{ review.content }}</p>
+    </div>
+    <div class="post-comments">
       <CommentList
         v-for="comment in comments"
         :key="comment.id"
         :comment="comment"
       />
     </div>
-
     <div class="">
       <Comment :review-id="reviewId" />
     </div>
+    <div v-if="isReviewUpdateModalOpen" class="modal-overlay-reviewcreate" @click.self="closeReviewUpdateModal">
+      <div class="modal-content-reviewcreate">
+        <div>
+          <button class="close-reviewcreate" @click="closeReviewUpdateModal"><i class="bi bi-x-circle-fill"></i></button>
+        </div>
+        <div>
+          <ReviewUpdate :review="review" @close="closeReviewUpdateModal" />
+        </div>
+      </div>
+    </div>
   </div>
-
 </template>
 
 <script setup>
@@ -65,13 +62,14 @@ import { useCommunityStore } from "@/stores/community";
 import axios from "axios";
 import CommentList from "@/components/CommentList.vue";
 import Comment from "@/components/Comment.vue";
-import RevieUpdate from '@/components/ReviewUpdate.vue'
+import ReviewUpdate from "@/components/ReviewUpdate.vue";
 
 const store = useUserStore();
 const communityStore = useCommunityStore();
+const isReviewUpdateModalOpen = ref(false);
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 const comments = computed(() => communityStore.comments);
 const reviewId = ref(route.params.reviewId);
 const review = ref({});
@@ -81,7 +79,14 @@ const reviewHated = ref(false);
 const reviewLikeCount = ref(0);
 const reviewHateCount = ref(0);
 
-// 리뷰 상세 정보 요청
+const openReviewUpdateModal = () => {
+  isReviewUpdateModalOpen.value = true;
+};
+
+const closeReviewUpdateModal = () => {
+  isReviewUpdateModalOpen.value = false;
+};
+
 onMounted(() => {
   axios({
     method: "get",
@@ -183,80 +188,143 @@ const reviewDelete = function () {
     .then((response) => {
       console.log(response);
       console.log("리뷰 삭제 완료");
-      router.push({name:'community'})
+      router.push({ name: "community" });
     })
     .catch((error) => {
       console.log(error);
     });
-}
+};
 </script>
 
 <style scoped>
-.s-container{
-  width: 40%;
+.post-container {
+  width: 500px;
   margin: 0 auto;
+  background-color: #000000;
+  border: 1px solid #dbdbdb;
+  border-radius: 3px;
+  padding: 20px;
+  color: #fff; /* 글자 색상 추가 */
 }
 
-
-.img {
-  width: 255px;
-}
-
-.icon-color {
-  font-size: 30px;
-  color: white;
-}
-.text-color {
-  font-size: 20px;
-  font-weight: 900;
-  color: white;
-  
-}
-
-.buttons-container {
+.post-header {
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
 }
 
-button {
-  position: relative;
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.post-image {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.post-actions i {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.post-likes {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.post-content {
+  margin-bottom: 10px;
+}
+
+.post-comments {
+  margin-bottom: 10px;
+}
+
+.add-comment {
+  display: flex;
+  justify-content: space-between;
+}
+
+.add-comment input {
+  flex: 1;
+  border: none;
+  border-top: 1px solid #dbdbdb;
   padding: 10px;
+}
+
+.add-comment button {
   border: none;
   background: none;
+  color: #3897f0;
+  font-weight: bold;
   cursor: pointer;
-  font-size: 16px;
+  padding: 10px;
+}
+
+.like-button,
+.hate-button {
+  margin: 0;
+}
+
+.button-item {
   display: flex;
   align-items: center;
-}
-
-.like-button, .hate-button {
-  margin-right: 20px;
-}
-
-.badge {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  background-color: red;
+  font-size: 20px; /* 동일한 크기 설정 */
   color: white;
-  border-radius: 30%;
-  padding: 5px 10px;
-  font-size: 20px;
-  display: inline-block;
 }
 
-.btn-common {
-  /* 공통 스타일을 정의합니다 */
-  display: inline-block;
-  text-align: center;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 0.25rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+.modal-overlay-reviewcreate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center; /* 중앙에 정렬 */
+  z-index: 1100; /* 네비게이션 바 위에 위치 */
 }
 
-.star {
-  color: yellow;
+.modal-content-reviewcreate {
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 3px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80%;
+  overflow-y: auto;
+  position: relative;
+  color: #000; /* 글자 색상 추가 */
+}
+
+.close-reviewcreate {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: red;
+  z-index: 1200; /* z-index 추가 */
 }
 </style>
