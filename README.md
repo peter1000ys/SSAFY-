@@ -3,7 +3,7 @@
 ## 1. 팀원 정보 및 업무 분담 내역
     이명욱(팀장) : 커뮤니티 및 로그인 관련 기능 구현(Django, Vue)
 
-    천요성(팀원) : 영화 관련 기능 구현(Django, Vue)
+    천요성(팀원) : 영화 관련 기능 및 AI 챗봇 구현(Django, Vue)
 
     프로젝트 기간 : 2024년 5월 16일 ~ 23일 (8일간)
         5월 16일(목) : 아이디어 회의, 요구 사항 정의서, ERD, 컴포넌트 배치 및 API docs 작성 및 역할 분담 개발 환경 세팅
@@ -63,7 +63,7 @@ def today_recommend(request):
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 ```
-  ![alt text](README/recommend.png)
+
 
     위와 같은 기준에 따라 요일별로 다른 장르의 영화 추천
 
@@ -111,8 +111,6 @@ def liked_genres_with_movies(request, user_pk):
     return Response(data)
 ```
 
-  ![alt text](README/recommend.png)
-  ![alt text](README/image-10.png)
 
     사용자가 좋아요한 영화 데이터를 기준으로 관련 장르의 영화 추천
 
@@ -126,7 +124,7 @@ def korean_movies(request):
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
 ```
-  ![alt text](README/korea.png)
+
 
     주요 타겟 사용자의 국적에 맞춘 추천
 
@@ -149,6 +147,17 @@ def korean_movies(request):
 ![alt text](README/image-12.png)
 ![alt text](README/image-11.png)
 
+> 영화 상세 페이지
+    넷플릭스 느낌으로 맨 위에 트레일러가 존재하고 제목과 세부 내용으로 구성
+    ![alt text](README/MovieDetailPage.png)
+
+    하단에 관련 컨탠츠 추천 받는 페이지와 해당 영화의 리뷰들을 확인할 수 있는 페이지를 선택하여 확인 가능
+    ![alt text](README/recommendMovieImg.png)
+    ![alt text](README/MovieReviews.png)
+
+> 영화 목록
+    장르별 영화 목록 정리
+    ![alt text](README/MovieGenreList.png)
 > 영화 검색
 
     사용자가 관심 있는 영화의 상세 정보 및 다른 사용자의 리뷰 를 확인
@@ -163,8 +172,12 @@ def korean_movies(request):
 > 커뮤니티
 
     리뷰 작성 및 영화에 관한 소통 창구(리뷰 상세보기, 좋아요 기능 및 댓글 작성 및 좋아요)
-![alt text](README/image-4.png)
-![alt text](README/image-9.png)
+    리뷰 생성 페이지는 modal을 활용하여 표현
+    ![alt text](README/ReviewCreate.png)
+
+    영화 상세 페이지는 인스타 느낌으로 표현
+
+    ![alt text](README/ReviewDetailPage.png)
 
 
 > 프로필
@@ -186,4 +199,4 @@ def korean_movies(request):
 
 이명욱: 프로젝트를 하기 전부터 부족함이 많다고 생각했던 터라 다른 이에게 폐를 끼치지는 않을지, 내 역량으로 프로젝트 산출물을 만들어 낼 수 있을지 등의 많은 두려움이 있었다. 그리고 예기치 못한 사정으로 싸피 과정에 온전히 참여하지 못한 점과 프로젝트 기간에도 예상되는 어려움이 있을 것으로 생각했었다. 이 자리를 빌려 페어에게 정말 고맙다고 이야기하고 싶다. 나의 어려운 사정임에도 흔쾌히 프로젝트를 같이 진행하자고 이야기해 주었고, 나 자신이 부끄러울 정도로 페어가 프로젝트에 열심히 참여하는 모습을 보여줘 프로젝트 기간 많은 동기부여가 되었다. 혼자였다면 끝까지 완주하지 못하였을 것인데 페어 덕분에 1학기를 마무리하고 성취감을 느낄 수 있었다. 그리고 관통 프로젝트를 진행하면서 지금까지 학습한 경험을 토대로 새로운 것들을 배우며, 문제를 해결했던 경험들이 개발자로 성장하는 데 큰 양분이 될 것으로 생각한다.
 
-천요성:
+천요성: 싸피 1학기 과정동안 내용을 따라 잡는데에 급급하였기 때문에 점점 다가오던 프로젝트는 막연한 두려움의 대상이였다. 배운 내용을 활용하여 무언가를 만들 수 있을까라는 의문이 들었고, 그 의문은 나를 더 불안하게 만들었다. 그래서 누군가와 팀을 이루게 되면 민폐를 끼치게 될거라는 생각이 앞서 쉽사리 팀원을 구하지 못하고 있을 때 팀장님이 먼저 제안을 줘서 시작점에 설 수 있었다. 그렇게 팀을 이뤄 막상 프로젝트를 시작하니 고민과 문제 해결의 과정을 거치며 성취감과 재미를 느낄 수 있었다. 이 과정에서 욕심이 생겨 많은 기능을 넣으려고 시도하였다. 이 욕심이 과해 프로젝트를 애매하게 끝낼 뻔했지만 팀장님이 기한에 맞춰 현실적으로 완성도 있게 구현하기 위해 계획을 제시해준 덕분에 잘 마무리 할 수 있었다. 이번 경험을 바탕으로 협업의 중요성을 느꼈고 앞으로 마주하게 될 여러 프로젝트에서도 물론 두려움은 느끼겠지만 도전해볼 용기가 생겼다. 
