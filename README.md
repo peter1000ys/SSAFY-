@@ -149,15 +149,15 @@ def korean_movies(request):
 
 > 영화 상세 페이지
     넷플릭스 느낌으로 맨 위에 트레일러가 존재하고 제목과 세부 내용으로 구성
-    ![alt text](README/MovieDetailPage.png)
+![alt text](README/MovieDetailPage.png)
 
     하단에 관련 컨탠츠 추천 받는 페이지와 해당 영화의 리뷰들을 확인할 수 있는 페이지를 선택하여 확인 가능
-    ![alt text](README/recommendMovieImg.png)
-    ![alt text](README/MovieReviews.png)
+![alt text](README/recommendMovieImg.png)
+![alt text](README/MovieReviews.png)
 
 > 영화 목록
     장르별 영화 목록 정리
-    ![alt text](README/MovieGenreList.png)
+![alt text](README/MovieGenreList.png)
 > 영화 검색
 
     사용자가 관심 있는 영화의 상세 정보 및 다른 사용자의 리뷰 를 확인
@@ -173,11 +173,11 @@ def korean_movies(request):
 
     리뷰 작성 및 영화에 관한 소통 창구(리뷰 상세보기, 좋아요 기능 및 댓글 작성 및 좋아요)
     리뷰 생성 페이지는 modal을 활용하여 표현
-    ![alt text](README/ReviewCreate.png)
+![alt text](README/ReviewCreate.png)
 
     영화 상세 페이지는 인스타 느낌으로 표현
 
-    ![alt text](README/ReviewDetailPage.png)
+![alt text](README/ReviewDetailPage.png)
 
 
 > 프로필
