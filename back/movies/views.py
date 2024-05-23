@@ -208,7 +208,9 @@ def liked_genres_with_movies(request, user_pk):
         genre_movies = Movie.objects.filter(genres=genre).order_by('-popularity')[:27]
         genres_dict[genre] = genre_movies
 
-    data = {genre.name: GenreMoviesSerializer({'genre': genre, 'movies': movies}).data for genre, movies in genres_dict.items()}
+    data = {genre.name:
+            GenreMoviesSerializer({'genre': genre, 'movies': movies}).data
+            for genre, movies in genres_dict.items()}
     return Response(data)
 
 

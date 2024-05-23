@@ -69,6 +69,7 @@ def today_recommend(request):
 
 >b. 취향저격 영화 추천
 ```
+# 좋아요 기준 유저에게 추천하는 영화 목록
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def user_recommend(request, user_pk):
@@ -87,9 +88,31 @@ def user_recommend(request, user_pk):
     movies = sorted(movies, key=lambda x: x.popularity, reverse=True)[:27]
     serializers = MovieListSerializer(movies, many=True)
     return Response(serializers.data)
+
+# 좋아요 한 장르 별 영화 가져오기
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def liked_genres_with_movies(request, user_pk):
+    user = get_object_or_404(User, pk=user_pk)
+    liked_movies = user.like_movies.all()
+    genres_dict = {}
+    for movie in liked_movies:
+        for genre in movie.genres.all():
+            if genre not in genres_dict:
+                genres_dict[genre] = []
+    
+    for genre in genres_dict:
+        genre_movies = Movie.objects.filter(genres=genre).order_by('-popularity')[:27]
+        genres_dict[genre] = genre_movies
+
+    data = {genre.name:
+            GenreMoviesSerializer({'genre': genre, 'movies': movies}).data
+            for genre, movies in genres_dict.items()}
+    return Response(data)
 ```
 
   ![alt text](README/recommend.png)
+  ![alt text](README/image-10.png)
 
     사용자가 좋아요한 영화 데이터를 기준으로 관련 장르의 영화 추천
 
@@ -106,6 +129,7 @@ def korean_movies(request):
   ![alt text](README/korea.png)
 
     주요 타겟 사용자의 국적에 맞춘 추천
+
 ## 5. 핵심 기능에 대한 설명
 
 >영화 추천 기능1
@@ -117,34 +141,36 @@ def korean_movies(request):
 ![alt text](README/image-8.png)
     맞춤형 추천(사용자가 좋아요한 영화의 장르의 영화 중 몇가지를 선정하여 추천 및 각 장르별 영화 추천)
 
+> 영화 추천 기능3
+![alt text](README/image-12.png)
+![alt text](README/image-11.png)
+    한국 영화 추천, 랜덤 추천 이외의 찜한 영화 목록 조회
+
 > 영화 검색
 ![alt text](README/image.png)
-    사용자가 관심 있는 영화의 상세 정보 및 리뷰 정보를 확인
+    사용자가 관심 있는 영화의 상세 정보 및 다른 사용자의 리뷰 를 확인
 
 > AI 챗봇(Jarvis)<br>
 ![alt text](README/image-3.png)
-<br>
     AI를 활용한 디테일한 영화 정보 확인
 
 > 커뮤니티
 ![alt text](README/image-4.png)
 ![alt text](README/image-9.png)
-<br>
-    리뷰 작성 및 영화에 관한 소통 창구(리뷰 상세보기, 좋아요 기능 및 댓글 달기)
+    리뷰 작성 및 영화에 관한 소통 창구(리뷰 상세보기, 좋아요 기능 및 댓글 작성 및 좋아요)
 
 > 프로필
 ![alt text](README/image-5.png)
-    자신이 작성한 리뷰와 자신이 찜한 영화 목록 확인
+    프로필 페이지에서 자신이 작성한 리뷰와 자신이 찜한 영화 목록 확인
 
 > 로그인, 회원가입<br>
 ![alt text](README/image-6.png)
 ![alt text](README/image-7.png)
-<br>
     회원 가입, 로그인 및 회원가입 기능 + 
     회원가입시 필요한 항목을 다 입력하지 않거나 로그인시 옳지 않은 아이디와 비밀번호를 입력시 에러메세지 출력
 
 ## 6. 기타 (느낀점, 후기 등)
 
-이명욱: 프로젝트를 하기 전부터 부족함이 많다고 생각했던 터라 다른이에게 폐를 끼치지는 않을지, 내 역량으로 프로젝트 산출물을 만들어 낼 수 있을지 등의 많은 두려움이 있었다. 그리고 예기치 못한 사정으로 싸피 과정에 온전히 참여하지 못한 점과 프로젝트 기간중에도 예상되는 어려움이 있을 것이라고 생각했었다. 이 자리를 빌어 페어에게 정말 고맙다고 이야기하고 싶다. 나의 어려운 사정임에도 흔쾌히 프로젝트를 같이 진행하자고 이야기해주었고, 나 자신이 부끄러울 정도로 페어가 프로젝트를 열심히 참여하는 모습을 보여줘 프로젝트 기간 동안 많은 동기부여가 되었다. 혼자였다면 끝까지 완주하지 못하였을 것인데 페어 덕분에 1학기를 마무리하고 성취감을 느낄 수 있었다. 그리고 관통 프로젝트를 진행하면서 지금까지 학습한 경험을 토대로 새로운 것들을 배우며, 문제를 해결했던 경험들이 개발자로 성장하는 데 큰 양분이 될 것이라 생각한다.
+이명욱: 프로젝트를 하기 전부터 부족함이 많다고 생각했던 터라 다른 이에게 폐를 끼치지는 않을지, 내 역량으로 프로젝트 산출물을 만들어 낼 수 있을지 등의 많은 두려움이 있었다. 그리고 예기치 못한 사정으로 싸피 과정에 온전히 참여하지 못한 점과 프로젝트 기간에도 예상되는 어려움이 있을 것으로 생각했었다. 이 자리를 빌려 페어에게 정말 고맙다고 이야기하고 싶다. 나의 어려운 사정임에도 흔쾌히 프로젝트를 같이 진행하자고 이야기해 주었고, 나 자신이 부끄러울 정도로 페어가 프로젝트에 열심히 참여하는 모습을 보여줘 프로젝트 기간 많은 동기부여가 되었다. 혼자였다면 끝까지 완주하지 못하였을 것인데 페어 덕분에 1학기를 마무리하고 성취감을 느낄 수 있었다. 그리고 관통 프로젝트를 진행하면서 지금까지 학습한 경험을 토대로 새로운 것들을 배우며, 문제를 해결했던 경험들이 개발자로 성장하는 데 큰 양분이 될 것으로 생각한다.
 
 천요성:
