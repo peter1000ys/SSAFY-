@@ -150,14 +150,14 @@ def korean_movies(request):
 ![alt text](README/image.png)
     사용자가 관심 있는 영화의 상세 정보 및 다른 사용자의 리뷰 를 확인
 
-> AI 챗봇(Jarvis)<br>
+> AI 챗봇(Jarvis) : AI를 활용한 디테일한 영화 정보 확인 <br>
 ![alt text](README/image-3.png)
-    AI를 활용한 디테일한 영화 정보 확인
+    
 
-> 커뮤니티
+> 커뮤니티 : 리뷰 작성 및 영화에 관한 소통 창구(리뷰 상세보기, 좋아요 기능 및 댓글 작성 및 좋아요)
 ![alt text](README/image-4.png)
 ![alt text](README/image-9.png)
-    리뷰 작성 및 영화에 관한 소통 창구(리뷰 상세보기, 좋아요 기능 및 댓글 작성 및 좋아요)
+    
 
 > 프로필
 ![alt text](README/image-5.png)
