@@ -9,7 +9,7 @@
           alt="..."
         />
       </div>
-      <div class="ms-4 fs-5">
+      <div class="ms-4 fs-6">
         <p>영화 제목 : {{ review.movie_title }}</p>
         <p>리뷰 제목 : {{ review.title }}</p>
         <p>리뷰 내용 : {{ review.content }}</p>
@@ -28,10 +28,17 @@
           <i class="bi bi-hand-thumbs-down icon-color" v-else> </i>
           <span class="text-color">{{ reviewHated ? "싫어요 취소" : "싫어요" }}</span>
         </button>
+        <div v-if="review.user === store.userId">
+          <button class="btn btn-outline-danger" @click="reviewDelete">리뷰 삭제</button>
+        </div>
       </div>
     </div>
-    </div>
-
+  </div>
+  <div v-if="review.user === store.userId">
+    <hr class="border border-danger border-2 opacity-50">
+    <h3 class="text-center">리뷰 수정</h3>
+    <RevieUpdate :review="review" />
+  </div>
     <div class="">
       <hr class="border border-danger border-2 opacity-50">
       <hr class="border border-danger border-2 opacity-30">
@@ -49,25 +56,27 @@
       <Comment :review-id="reviewId" />
     </div>
   </div>
+
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { useCommunityStore } from "@/stores/community";
 import axios from "axios";
 import CommentList from "@/components/CommentList.vue";
 import Comment from "@/components/Comment.vue";
+import RevieUpdate from '@/components/ReviewUpdate.vue'
 
 const store = useUserStore();
 const communityStore = useCommunityStore();
 
-const route = useRoute();
+const route = useRoute()
+const router = useRouter()
 const comments = computed(() => communityStore.comments);
 const reviewId = ref(route.params.reviewId);
 const review = ref({});
-console.log("리뷰id", reviewId.value);
 
 const reviewLiked = ref(false);
 const reviewHated = ref(false);
@@ -164,6 +173,29 @@ const reviewHate = function () {
       console.log(error);
     });
 };
+
+const reviewDelete = function () {
+  axios({
+    method: "delete",
+    url: `http://127.0.0.1:8000/api/v1_1/${reviewId.value}/`,
+    headers: {
+      Authorization: `Token ${store.token}`,
+    },
+  })
+    .then((response) => {
+      console.log(response);
+      console.log("리뷰 삭제 완료");
+      router.push({name:'community'})
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+// const reviewUpdate = function () {
+//   router.push({name:'reviewUpdate', params:{reviewId:reviewId}})
+// }
+
 </script>
 
 <style scoped>
@@ -171,6 +203,7 @@ const reviewHate = function () {
   width: 40%;
   margin: 0 auto;
 }
+
 
 .img {
   width: 200px;
@@ -217,5 +250,16 @@ button {
   padding: 5px 10px;
   font-size: 20px;
   display: inline-block;
+}
+
+.btn-common {
+  /* 공통 스타일을 정의합니다 */
+  display: inline-block;
+  text-align: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 </style>

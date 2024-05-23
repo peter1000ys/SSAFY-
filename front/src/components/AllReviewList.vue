@@ -1,21 +1,21 @@
 <template>
-  <!-- <hr class="border border-danger border-2 opacity-30"> -->
-  <div class="card card-1">
-    <div class="d-flex">
+  <div>
+    <div id="box">
       <img
         class="img me-3"
         :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`"
         alt="..."
       />
-      <!-- <div @click.prevent="goDetail"> -->
-      <div class="text-white fs-5">
-        <p>영화 제목 : {{ review.movie_title }}</p>
-        <p>리뷰 내용 : {{ review.content }}</p>
-        <p>평점 : {{ review.rank }} 점</p>
+      <div class="overlay text-white">
+        <p class="fs-3">{{ review.movie_title }}</p>
+        <p class="fs-5">리뷰 : {{ review.content }}</p>
+        <p class="fs-5">평점 : {{ review.rank }} 점</p>
         <RouterLink
           :to="{ name: 'reviewDetail', params: { reviewId: review.id } }"
-          class="main-text btn btn-outline-danger"
-          >리뷰 상세보기</RouterLink
+          class="main-text btn btn-outline-danger mb-5"
+          >
+          리뷰 상세보기
+        </RouterLink
         >
       </div>
     </div>

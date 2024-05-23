@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex align-items-center justify-content-center fs-6">
     <p class="mb-0">
-      댓글 내용 : {{ comment.content }}
+      {{ comment.content }}
       
     </p>
     <div class="buttons-container">
@@ -17,7 +17,11 @@
         <i class="bi bi-hand-thumbs-down icon-color" v-else></i>
         <span class="text-color" >{{ commentHated ? "싫어요 취소" : "싫어요" }}</span>
       </button>
-    
+      <div v-if="store.userId === comment.user">
+        <button @click="commentDelete(comment.review, comment.id)">
+          <i class="bi bi-trash trash"></i>
+        </button>
+      </div>
     </div>
     
     <!-- <p>좋아요 수 : {{ commentLikeCount }}</p>
@@ -31,6 +35,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
+import { useCommunityStore } from '@/stores/community'
 import axios from "axios";
 
 const props = defineProps({
@@ -42,7 +47,27 @@ const commentHated = ref(false);
 const commentLikeCount = ref(0);
 const commentHateCount = ref(0);
 
-const store = useUserStore();
+const store = useUserStore()
+const communityStore = useCommunityStore()
+
+const commentDelete = function (commentReview, commentId) {
+  axios({
+    method: "delete",
+    url: `http://127.0.0.1:8000/api/v1_1/${commentReview}/comment/${commentId}/`,
+    headers: {
+      Authorization: `Token ${store.token}`,
+    },
+  })
+    .then((response) => {
+      console.log(response);
+      console.log("코멘트 삭제 완료");
+      communityStore.getComments(commentReview)
+      router.push({name:'reviewDetail', params:{reviewId:commentReview}})
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
 const commentLike = function () {
   axios({
@@ -121,6 +146,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.trash {
+  font-size: 20px;
+  color:red;
+}
 .icon-color {
   font-size: 20px;
   color: white;

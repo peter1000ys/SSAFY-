@@ -10,39 +10,29 @@
     </div>
   </div>
 
+  <!-- 찜한 영화 없을때, 커버 사진 없음 -->
   <div class="container">
-    <!-- <h1 class="font">프로필</h1> -->
-    <div class="d-flex align-items-center justify-content-center flex-column">
+    <div v-if="favoriteMovies.length" class="d-flex align-items-center justify-content-center flex-column">
       <div class="d-flex">
-        <div class="box">
+        <div class="box d-flex flex-column align-items-center">
           <img class="profile" src="@/assets/profile.jpg" alt="#" />
-          <p class="fs-4">닉네임 : {{ store.loginUsername }}</p>
+          <p class="fs-4 nickname">닉네임 : {{ store.loginUsername }}</p>
         </div>
       </div>
-
-      <!-- <div class="d-flex">
-        <div v-for="review in reviews">
-          <div class="d-flex ">
-            <img
-              class="img"
-              :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`"
-              alt="..."
-            />
-            <div>
-              <p class="mb-1" @click.prevent="goDetail(review.id)">
-                {{ review.movie_title }}
-              </p>
-              <p @click.prevent="goDetail(review.id)">
-                리뷰 내용 : {{ review.content }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr/> -->
     </div>
 
-    <div class="mt-5" v-if="reviews">
+    <!-- 찜한 영화 있을 때, 커버 사진 있음 -->
+    <div v-else class="d-flex align-items-center justify-content-center flex-column">
+      <div class="d-flex">
+        <div class="no-box d-flex flex-column align-items-center">
+          <img class="profile" src="@/assets/profile.jpg" alt="#" />
+          <p class="fs-4 nickname">닉네임 : {{ store.loginUsername }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 작성한 리뷰 목록 -->
+    <div class="mt-5" v-if="reviews.length">
       <h2 class="font">작성한 리뷰 목록</h2>
       <div class="movie-card-container">
         <div v-for="review in reviews" :key="review.id">
@@ -75,7 +65,8 @@
       </div>
     </div>
 
-    <div class="mt-5" v-if="favoriteMovies">
+    <!-- 찜한 영화 목록 -->
+    <div class="mt-5" v-if="favoriteMovies.length">
       <h2 class="font">찜한 영화 목록</h2>
       <div class="movie-card-container">
         <div v-for="movie in favoriteMovies" :key="movie.id">
@@ -101,7 +92,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { useUserStore } from "@/stores/user";
 import axios from "axios";
 import { useRouter } from "vue-router";
@@ -113,15 +104,18 @@ const favoriteMovies = ref([]);
 const reviews = ref([]);
 const randomIndex = ref(0);
 
+// 영화 상세페이지 이동
 const MovieDetail = function (movieId) {
   console.log(movieId);
   router.push({ name: "detail", params: { movieId: movieId } });
 };
 
+// 리뷰 상세 정보 페이지 이동
 const goDetail = function (reviewId) {
   router.push({ name: "reviewDetail", params: { reviewId: reviewId } });
 };
 
+// 찜한 영화 조회
 const favoriteMovie = function () {
   axios({
     method: "get",
@@ -143,6 +137,8 @@ const favoriteMovie = function () {
       console.log(error);
     });
 };
+
+// 유저가 작성한 리뷰 조회
 const userReview = function () {
   axios({
     method: "get",
@@ -170,13 +166,24 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.nickname {
+  white-space: nowrap;
+}
 .box {
   width: 150px;
   height: 150px;
   bottom: 0;
   left: 0;
-  transform: translateY(-40%);
+  transform: translateY(-70%);
 }
+
+.no-box {
+  width: 150px;
+  height: 150px;
+  bottom: 0;
+  left: 0;
+}
+
 .profile {
   width: 100%;
   height: 100%;
@@ -200,7 +207,7 @@ onMounted(() => {
   height: auto; /* 이미지의 비율을 유지 */
   position: absolute; /* 절대 위치 설정 */
   top: 0; /* 이미지를 컨테이너의 상단에 맞춤 */
-  transform: translateY(-25%);
+  transform: translateY(-5%);
 }
 .gradient-overlay {
   position: absolute;
@@ -222,7 +229,6 @@ onMounted(() => {
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  /* 카드 간격을 조정합니다 */
 }
 
 .movie-card {
@@ -326,4 +332,26 @@ onMounted(() => {
   opacity: 1;
   pointer-events: auto;
 }
+
 </style>
+
+      <!-- <div class="d-flex">
+        <div v-for="review in reviews">
+          <div class="d-flex ">
+            <img
+              class="img"
+              :src="`https://image.tmdb.org/t/p/w500${review.poster_path}`"
+              alt="..."
+            />
+            <div>
+              <p class="mb-1" @click.prevent="goDetail(review.id)">
+                {{ review.movie_title }}
+              </p>
+              <p @click.prevent="goDetail(review.id)">
+                리뷰 내용 : {{ review.content }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr/> -->

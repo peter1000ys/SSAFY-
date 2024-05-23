@@ -10,8 +10,10 @@ urlpatterns = [
     path("<int:review_pk>/like/<int:user_pk>/", views.review_like),
     # 리뷰 싫어요
     path("<int:review_pk>/hate/<int:user_pk>/", views.review_hate),
-    # 리뷰 <- 댓글 작성
+    # 리뷰 <- 댓글 작성, 조회
     path("<int:review_pk>/comment/", views.review_comment),
+    # 리뷰 <- 상세 조회, 삭제
+    path('<int:review_pk>/comment/<int:comment_pk>/', views.review_comment_detail),
     # 리뷰 - 댓글 좋아요
     path(
         "<int:review_pk>/comment/<int:comment_pk>/like/<int:user_pk>/",

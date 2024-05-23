@@ -27,17 +27,34 @@ const router = useRouter();
 const store = useUserStore();
 const username = ref("");
 
-const login = function () {
+const login =  async function () {
   if (!username.value || !password.value) {
     alert('입력되지 않은 항목이 있습니다.');
     return;
   }
 
   const data = new FormData(form.value);
-  store.login(data, username);
-  form.value.reset();
-  router.push({ name: "home" });
+
+  const isLogin = await store.login(data, username);
+
+  if (isLogin) {
+    form.value.reset();
+    router.push({ name: "home" });
+  } else {
+    alert("아이디와 비밀번호를 다시 확인해주세요");
+  }
 };
+
+  // await store.login(data, username);
+
+  // if (store.token) {
+  //   form.value.reset();
+  //   router.push({ name: "home" });
+  // }
+  // else {
+  //   alert("아이디와 비밀번호를 다시 확인해주세요")
+  // }
+// };
 </script>
 
 <style scoped>
