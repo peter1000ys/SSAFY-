@@ -23,7 +23,7 @@ from django.http import HttpResponse, JsonResponse
 @permission_classes([IsAuthenticated])
 def review_list(request):
     if request.method == "GET":
-        reviews = Review.objects.all()
+        reviews = Review.objects.order_by('-rank')
         serializer = ReviewListSerializer(reviews, many=True)
         return Response(serializer.data)
     elif request.method == "POST":

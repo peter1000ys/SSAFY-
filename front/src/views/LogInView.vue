@@ -45,16 +45,6 @@ const login =  async function () {
   }
 };
 
-  // await store.login(data, username);
-
-  // if (store.token) {
-  //   form.value.reset();
-  //   router.push({ name: "home" });
-  // }
-  // else {
-  //   alert("아이디와 비밀번호를 다시 확인해주세요")
-  // }
-// };
 </script>
 
 <style scoped>

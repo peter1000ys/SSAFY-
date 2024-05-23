@@ -3,8 +3,8 @@
     <div id="box">
       <img :src="`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`" class="img" alt="...">
       <div class="overlay">
-          <h2 class="heading">{{ movie.title }}</h2>
-          <p><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</p>
+          <h2 class="heading p-2">{{ movie.title }}</h2>
+          <p><i class="bi bi-star-fill p-2"></i>{{ movie.vote_average }}</p>
       </div>
     </div>
   </div>

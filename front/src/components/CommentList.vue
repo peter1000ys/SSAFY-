@@ -9,13 +9,12 @@
         <span class="badge" v-if="commentLikeCount > 0">{{ commentLikeCount }}</span>
         <i class="bi bi-hand-thumbs-up-fill icon-color" v-if="commentLiked"></i>
         <i class="bi bi-hand-thumbs-up icon-color" v-else></i>
-        <span class="text-color" >{{ commentLiked ? "좋아요 취소" : "좋아요" }}</span>
+
       </button>
       <button @click="commentHate()" class="hate-button">
         <span class="badge" v-if="commentHateCount > 0">{{ commentHateCount }}</span>
         <i class="bi bi-hand-thumbs-down-fill icon-color" v-if="commentHated"></i>
         <i class="bi bi-hand-thumbs-down icon-color" v-else></i>
-        <span class="text-color" >{{ commentHated ? "싫어요 취소" : "싫어요" }}</span>
       </button>
       <div v-if="store.userId === comment.user">
         <button @click="commentDelete(comment.review, comment.id)">
@@ -23,10 +22,6 @@
         </button>
       </div>
     </div>
-    
-    <!-- <p>좋아요 수 : {{ commentLikeCount }}</p>
-    <p>싫어요 수 : {{ commentHateCount }}</p> -->
-    <!-- <hr class="border border-danger border-2 opacity-50"> -->
   </div>
   <hr class="border border-danger border-2 opacity-30">
 

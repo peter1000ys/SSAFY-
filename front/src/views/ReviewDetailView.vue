@@ -1,7 +1,6 @@
 <template >
   <div class="s-container">
-    <h1 class="font">리뷰 상세페이지</h1>
-    <div class="d-flex align-items-center justify-content-center">
+    <div class="d-flex align-items-start justify-content-center">
       <div>
         <img
           class="img"
@@ -14,19 +13,18 @@
         <p>리뷰 제목 : {{ review.title }}</p>
         <p>리뷰 내용 : {{ review.content }}</p>
         <p>작성자 : {{ review.username }}</p>
-        <p>평점 : {{ review.rank }} 점</p>
+        <p class="fs-4"><i class="bi bi-star-fill star"></i> {{ review.rank }}</p>
+        <br>
       <div class="buttons-container">
         <button @click="reviewLike()" class="like-button">
           <span class="badge" v-if="reviewLikeCount > 0">{{ reviewLikeCount }}</span>
           <i class="bi bi-hand-thumbs-up-fill icon-color" v-if="reviewLiked"> </i>
           <i class="bi bi-hand-thumbs-up icon-color" v-else> </i>
-          <span class="text-color">{{ reviewLiked ? "좋아요 취소" : "좋아요" }}</span>
         </button>
         <button @click="reviewHate()" class="hate-button">
           <span class="badge" v-if="reviewHateCount > 0">{{ reviewHateCount }}</span>
           <i class="bi bi-hand-thumbs-down-fill icon-color" v-if="reviewHated"> </i>
           <i class="bi bi-hand-thumbs-down icon-color" v-else> </i>
-          <span class="text-color">{{ reviewHated ? "싫어요 취소" : "싫어요" }}</span>
         </button>
         <div v-if="review.user === store.userId">
           <button class="btn btn-outline-danger" @click="reviewDelete">리뷰 삭제</button>
@@ -191,11 +189,6 @@ const reviewDelete = function () {
       console.log(error);
     });
 }
-
-// const reviewUpdate = function () {
-//   router.push({name:'reviewUpdate', params:{reviewId:reviewId}})
-// }
-
 </script>
 
 <style scoped>
@@ -206,7 +199,7 @@ const reviewDelete = function () {
 
 
 .img {
-  width: 200px;
+  width: 255px;
 }
 
 .icon-color {
@@ -261,5 +254,9 @@ button {
   line-height: 1.5;
   border-radius: 0.25rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.star {
+  color: yellow;
 }
 </style>

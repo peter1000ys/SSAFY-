@@ -19,16 +19,29 @@
           <div v-else>
             <a @click="logout" style="padding: 20px;">로그아웃</a>
             <RouterLink :to="{ name:'profile'}">프로필</RouterLink>
+            <div class="Chat">
+              <i class="bi bi-chat-right-quote-fill text-red" @click="openChatModal"></i>
+            </div>
           </div>
         </div>
       </header>
       <div v-if="isSearchModalOpen" class="modal-overlay" @click.self="closeSearchModal">
         <div class="modal-content">
           <div>
-            <button class="close-button" @click="closeSearchModal">X</button>
+            <button class="close-button" @click="closeSearchModal"><i class="bi bi-x-circle-fill"></i></button>
           </div>
           <div>
-            <SearchModal @close="closeSearchModal" :close-modal="closeSearchModal" />
+            <SearchModal @close="closeSearchModal" :close-modal="closeSearchModal" /> 
+          </div>
+        </div>
+      </div>
+      <div v-if="isChatModalOpen" class="modal-overlay-chat" @click.self="closeChatModal">
+        <div class="modal-content-chat">
+          <div>
+            <button class="close-chat" @click="closeChatModal"><i class="bi bi-x-circle-fill"></i></button>
+          </div>
+          <div>
+            <Chatbot @close="closeChatModal" :close-modal="closeChatModal" />
           </div>
         </div>
       </div>
@@ -38,14 +51,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
-import { useRouter } from 'vue-router'
-import SearchModal from '@/components/SearchModal.vue'
+import { useRouter } from 'vue-router';
+import SearchModal from '@/components/SearchModal.vue';
+import Chatbot from '@/components/Chatbot.vue';
 
 const store = useUserStore()
 const router = useRouter()
 const isSearchModalOpen = ref(false)
+const isChatModalOpen = ref(false)
 
 const logout = function () {
   store.logout()
@@ -58,6 +73,14 @@ const openSearchModal = () => {
 
 const closeSearchModal = () => {
   isSearchModalOpen.value = false
+}
+
+const openChatModal = () => {
+  isChatModalOpen.value = true
+}
+
+const closeChatModal = () => {
+  isChatModalOpen.value = false
 }
 </script>
 
@@ -128,7 +151,19 @@ a {
   justify-content: center;
   align-items: flex-start; /* 상단에 정렬 */
   z-index: 1100; /* 네비게이션 바 위에 위치 */
+}
 
+.modal-overlay-chat {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: flex-end; /* 우측 하단에 정렬 */
+  align-items: flex-end; /* 우측 하단에 정렬 */
+  z-index: 1100; /* 네비게이션 바 위에 위치 */
 }
 
 .modal-content {
@@ -142,6 +177,17 @@ a {
   position: relative;
 }
 
+.modal-content-chat {
+  background-color: rgb(0, 0, 0);
+  padding: 10px;
+  border-radius: 3px;
+  width: 600px; /* 원하는 너비로 수정 */
+  max-height: 500px;
+  overflow-y: auto;
+  position: relative;
+  margin: 20px; /* 모달과 화면 가장자리 사이의 간격 */
+}
+
 .close-button {
   position: absolute;
   top: 10px;
@@ -150,5 +196,25 @@ a {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+  z-index: 1200; /* z-index 추가 */
+}
+
+.close-chat {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: red;
+  z-index: 1200; /* z-index 추가 */
+}
+
+.Chat{
+  position: fixed;
+  bottom: 30px;
+  right: 50px;
+  font-size: xx-large;
 }
 </style>

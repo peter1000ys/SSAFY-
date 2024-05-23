@@ -9,21 +9,14 @@
           </div>
         </div>
       </div>
-      <!-- <button class="carousel-control-prev" type="button" data-bs-target="#dateCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#dateCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button> -->
+
     </div>
 
 </template>
 
 <script setup>
 import DateMovieCard from './DateMovieCard.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { useRecommendStore } from '@/stores/recommend';
 
 const store = useRecommendStore()

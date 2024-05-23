@@ -1,6 +1,5 @@
 <template>
   <div class="review-create-container">
-    <!-- <h1 class="">ReviewCreate</h1> -->
     <form @submit.prevent="createReview">
       <div class="form-group">
         <label for="movie_title_search">영화 제목</label>
@@ -133,7 +132,7 @@ const createReview = function () {
     poster_path: poster_path.value,
     username: userStore.loginUsername,
   };
-  // console.log(data)
+
   store.createReview(data);
   title.value = "";
   movie_title.value = "";

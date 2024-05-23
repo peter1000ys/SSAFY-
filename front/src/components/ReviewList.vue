@@ -1,7 +1,6 @@
 
 <template>
   <div>
-    <h1>Review List</h1>
     <div class="card-container">
       <div v-for="review in store.reviews" :key="review.id" class="card" @click="goDetail(review.id)">
         <p>작성자 : {{ review.username }} </p>

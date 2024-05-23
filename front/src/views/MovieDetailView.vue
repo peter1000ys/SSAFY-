@@ -2,7 +2,7 @@
   <div class="movie-detail-container">
     <div class="video-container">
       <iframe
-        v-if="store.movieVideoKey"
+      v-if="store.movieVideoKey"
         id="player"
         type="text/html"
         width="1150"
@@ -33,6 +33,7 @@
       <div class="movie-detail-child">
         <p>{{ store.movie.overview }}</p>
       </div>
+      <!--로그인 되어 있으면 좋아요, 싫어요, 찜하기 정상 작동-->
       <div class="d-flex justify-content-start" v-if="userStore.isLogin">
         <div style="margin-right: 30px;">
           <span>
@@ -83,7 +84,7 @@
           </span>
         </div>
       </div>
-
+      <!--로그인 안 되어 있으면 좋아요, 싫어요, 찜하기 클릭 시 로그인 페이지로 이동-->
       <div class="d-flex justify-content-start" v-else>
         <div style="margin-right: 30px;">
           <i class="bi bi-hand-thumbs-up" @click="loginAlert" style="font-size: 2rem; cursor: pointer;"></i>
@@ -96,8 +97,8 @@
 
       <div>
         <nav class="d-flex justify-content-center">
-          <RouterLink :to="{ name: 'related' }" @click="getSimilar(store.movie.id)">비슷한 콘텐츠</RouterLink> |
-          <RouterLink :to="{ name: 'review' }" @click="getMovieReview(store.movie.title)">리뷰 목록</RouterLink>
+          <RouterLink :to="{ name: 'related' }" @click="getSimilar(store.movie.id)">비슷한 콘텐츠</RouterLink> | 
+          <RouterLink :to="{ name: 'review' }" @click="getMovieReview(store.movie.title)" class="pl-3">리뷰 목록</RouterLink>
         </nav>
         <RouterView />
       </div>
@@ -108,10 +109,9 @@
 
 
 <script setup>
-import axios from 'axios'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import { ref, onMounted, watch, onUnmounted } from 'vue'
-import { useRoute, useRouter, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
 import { RouterLink, RouterView } from 'vue-router'

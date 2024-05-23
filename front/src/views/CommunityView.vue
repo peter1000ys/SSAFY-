@@ -27,7 +27,7 @@
 
 <script setup>
 import AllReviewList from "@/components/AllReviewList.vue";
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { useCommunityStore } from "@/stores/community";
 
 const store = useCommunityStore();
@@ -86,34 +86,3 @@ onMounted(() => {
 }
 </style>
 
-<!-- <div>
-  <h1>Genre: {{ genreName }}</h1>
-  <div class="movie-card-container">
-    <div v-for="movie in paginatedStoreMovies" :key="movie.id" class="movie-card">
-      <GenreMovieCard :movie="movie" />
-    </div>
-  </div>
-  <div class="pagination">
-    <button @click="prevPage" :disabled="currentPage === 1">이전</button>
-    <span>{{ currentPage }} / {{ totalPages }}</span>
-    <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
-  </div>
-</div> -->
-
-<!-- <template>
-  <div  @click="MovieDetail(movie.pk)">
-    <div id="box">
-    <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" class="img" alt="...">
-    <div class="overlay">
-      <h1 class="heading">{{ movie.title }}</h1>
-      <div class="data">
-        <span class="date">{{movie.release_date}}</span>
-        <span class="user-id">{{ movie.overview }}</span>
-      </div>
-      <p class="texts">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-      </p>
-    </div>
-  </div>
-  </div>
-</template> -->

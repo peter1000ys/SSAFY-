@@ -9,7 +9,7 @@
       <div class="overlay text-white">
         <p class="fs-3">{{ review.movie_title }}</p>
         <p class="fs-5">리뷰 : {{ review.content }}</p>
-        <p class="fs-5">평점 : {{ review.rank }} 점</p>
+        <p class="fs-5"><i class="bi bi-star-fill star"></i> {{ review.rank }} </p>
         <RouterLink
           :to="{ name: 'reviewDetail', params: { reviewId: review.id } }"
           class="main-text btn btn-outline-danger mb-5"
@@ -26,15 +26,11 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
-
 const props = defineProps({
   review: Object,
 });
-const router = useRouter();
-const goDetail = function () {
-  router.push({ name: "reviewDetail", params: { reviewId: props.review.id } });
-};
+
+
 </script>
 
 <style scoped>
@@ -147,5 +143,7 @@ const goDetail = function () {
   pointer-events: auto;
 }
 
-
+.star {
+  color: yellow;
+}
 </style>

@@ -1,12 +1,9 @@
 <template>
   <div class="fs-4">
     <hr class="border border-danger border-2 opacity-50" />
-
-    <!-- <p class="fs-5 font text-center">작성하기</p> -->
     <form @submit.prevent="createComment">
       <div class="d-flex align-center justify-content-center">
         <label for="content"> </label>
-        <!-- <textarea name="content" id="content" cols="30" rows="1" v-model="content"></textarea> -->
         <input
           class="form-control"
           type="text"

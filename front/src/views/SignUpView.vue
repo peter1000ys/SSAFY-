@@ -3,18 +3,15 @@
     <h1 class="font">회원가입 페이지</h1>
     <form ref="form" @submit.prevent="signup" class="'signup-form'">
       <div class="form-group">
-        <label for="username">username : </label>
-        <input type="text" id="username" name="username" />
+        <input type="text" id="username" name="username" placeholder="nickname을 입력하세요."/>
       </div>
 
       <div class="form-group">
-        <label for="password1">password : </label>
-        <input type="password" id="password1" name="password1" />
+        <input type="password" id="password1" name="password1" placeholder="password를 입력하세요."/>
       </div>
 
       <div class="form-group">
-        <label for="password2">password Confirmation : </label>
-        <input type="password" id="password2" name="password2" />
+        <input type="password" id="password2" name="password2" placeholder="password를 한 번 더 입력하세요." />
       </div>
       <button type="submit">submit</button>
     </form>

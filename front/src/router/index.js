@@ -7,8 +7,6 @@ import LogInView from '@/views/LogInView.vue'
 import CommunityView from '@/views/CommunityView.vue'
 import ReviewDetailView from '@/views/ReviewDetailView.vue'
 import ProfileView from '@/views/ProfileView.vue'
-import SearchView from '@/views/SearchView.vue'
-import SearchModalView from '@/views/SearchView.vue'
 import RelatedMovie from '@/components/RelatedMovie.vue'
 import ReviewList from '@/components/ReviewList.vue'
 import Genre from '@/components/Genre.vue'
@@ -17,10 +15,8 @@ import ReviewCreate from '@/components/ReviewCreate.vue'
 import ReviewUpdate from '@/components/ReviewUpdate.vue'
 
 import Comment from '@/components/Comment.vue'
-
-import { useCommunityStore } from '@/stores/community'
-import { useMovieStore } from '@/stores/movie'
-import { useRecommendStore } from '@/stores/recommend'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 // 라우터 네임 확인하고 사용하기!!
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,14 +25,6 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-      // beforeEnter:(to, from) => {
-      //   const store = useMovieStore()
-      //   const recommendStore = useRecommendStore()
-      //   store.myFavoriteMovie()
-      //   recommendStore.userRecommend()
-      //   console.log("실행됨")
-
-      // }
     },
     {
       path: '/movies/',
@@ -56,7 +44,15 @@ const router = createRouter({
       component: MovieDetailView,
       children: [
         {path:'related', name:'related', component:RelatedMovie,},
-        {path:'review', name:'review', component:ReviewList},
+        {path:'review', name:'review', component:ReviewList,
+        beforeEnter:(to, from) => {
+          const store = useUserStore()
+          const router = useRouter()
+          if(!store.isLogin){
+            window.alert('로그인이 필요합니다!')
+            router.push({name: 'login'})
+          }
+        },},
       ]
     },
     {
@@ -73,6 +69,14 @@ const router = createRouter({
       path: '/community',
       name: 'community',
       component: CommunityView,
+      beforeEnter:(to, from) => {
+        const store = useUserStore()
+        const router = useRouter()
+        if(!store.isLogin){
+          window.alert('로그인이 필요합니다!')
+          router.push({name: 'login'})
+        }
+      },
       children:[
         {path:'create', name:'create', component:ReviewCreate},
       ]
@@ -95,12 +99,6 @@ const router = createRouter({
       name: 'profile',
       component: ProfileView
     }
-    ,
-    {
-      path: '/search',
-      name: 'search',
-      component: SearchView
-    },
   ]
 })
 

@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import axios from 'axios'
+
 import Date from '@/components/Date.vue'
 import Korea from '@/components/Korea.vue'
 import Week from '@/components/Week.vue'
@@ -116,9 +116,9 @@ import BannerSlide from '@/components/BannerSlide.vue'
 import { useMovieStore } from '@/stores/movie'
 import { useUserStore } from '@/stores/user'
 import { useRecommendStore } from '@/stores/recommend'
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import GenreRecommend from '@/components/GenreRecommend.vue'
-import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 
 const store = useMovieStore()

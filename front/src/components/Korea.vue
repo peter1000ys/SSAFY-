@@ -20,7 +20,7 @@
   </template>
   
   <script setup>
-  import { onMounted, ref } from 'vue';
+  import { onMounted } from 'vue';
   import { useRecommendStore } from '@/stores/recommend';
   import KoreaMovieCard from './KoreaMovieCard.vue';
   
