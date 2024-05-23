@@ -133,41 +133,54 @@ def korean_movies(request):
 ## 5. 핵심 기능에 대한 설명
 
 >영화 추천 기능1
-![alt text](README/image-2.png)
+
     요일에 따라 하루를 더 힘차고 알차게 보낼 수 있는 영화 추천
+![alt text](README/image-2.png)
 
 > 영화 추천 기능2
+
+    맞춤형 추천(사용자가 좋아요한 영화의 장르의 영화 중 몇가지를 선정하여 추천 및 각 장르별 영화 추천)
 ![alt text](README/image-1.png)
 ![alt text](README/image-8.png)
-    맞춤형 추천(사용자가 좋아요한 영화의 장르의 영화 중 몇가지를 선정하여 추천 및 각 장르별 영화 추천)
 
 > 영화 추천 기능3
+
+    한국 영화 추천, 랜덤 추천 이외의 찜한 영화 목록 조회
 ![alt text](README/image-12.png)
 ![alt text](README/image-11.png)
-    한국 영화 추천, 랜덤 추천 이외의 찜한 영화 목록 조회
 
 > 영화 검색
-![alt text](README/image.png)
-    사용자가 관심 있는 영화의 상세 정보 및 다른 사용자의 리뷰 를 확인
 
-> AI 챗봇(Jarvis) : AI를 활용한 디테일한 영화 정보 확인 <br>
+    사용자가 관심 있는 영화의 상세 정보 및 다른 사용자의 리뷰 를 확인
+![alt text](README/image.png)
+
+> AI 챗봇(Jarvis)
+
+    AI를 활용한 디테일한 영화 정보 확인
 ![alt text](README/image-3.png)
     
 
-> 커뮤니티 : 리뷰 작성 및 영화에 관한 소통 창구(리뷰 상세보기, 좋아요 기능 및 댓글 작성 및 좋아요)
+> 커뮤니티
+
+    리뷰 작성 및 영화에 관한 소통 창구(리뷰 상세보기, 좋아요 기능 및 댓글 작성 및 좋아요)
 ![alt text](README/image-4.png)
 ![alt text](README/image-9.png)
-    
+
 
 > 프로필
-![alt text](README/image-5.png)
-    프로필 페이지에서 자신이 작성한 리뷰와 자신이 찜한 영화 목록 확인
 
-> 로그인, 회원가입<br>
-![alt text](README/image-6.png)
-![alt text](README/image-7.png)
+    프로필 페이지에서 자신이 작성한 리뷰와 자신이 찜한 영화 목록 확인
+![alt text](README/image-5.png)
+
+
+> 로그인, 회원가입
+
     회원 가입, 로그인 및 회원가입 기능 + 
     회원가입시 필요한 항목을 다 입력하지 않거나 로그인시 옳지 않은 아이디와 비밀번호를 입력시 에러메세지 출력
+
+![alt text](README/image-6.png)
+![alt text](README/image-7.png)
+
 
 ## 6. 기타 (느낀점, 후기 등)
 
