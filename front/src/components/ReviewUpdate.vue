@@ -38,7 +38,7 @@
       </div>
 
       <div class="form-group">
-        <label for="title">리뷰 제목</label>
+
         <input
           class="form-control"
           type="text"
@@ -49,14 +49,14 @@
       </div>
 
       <div class="form-group">
-        <label for="content">리뷰 내용</label>
-        <input
+
+        <textarea
           class="form-control"
           type="text"
           id="content"
           name="content"
           v-model="content"
-        />
+        ></textarea>
       </div>
       <div>
         <label class="form-group" for="rank">나의 점수</label>
@@ -77,28 +77,21 @@ import { useUserStore } from "@/stores/user";
 import axios from "axios";
 import StarRating from "@/components/StarRating.vue";
 
-// community 스토어
-const store = useCommunityStore();
-// user 스토어
-const userStore = useUserStore();
-
 const props = defineProps({
-  review:Object
-})
-console.log("props", props.review)
-const review = props.review
-console.log("review", review)
+  review: Object
+});
+
+const emit = defineEmits(['close']);
 
 // 리뷰 작성 필드 정보
-const title = ref(review.title);
-console.log("title", title.value)
-const movie_title = ref(review.movie_title);
-const rank = ref(review.rank);
-const content = ref(review.content);
-const poster_path = ref(review.poster_path);
+const title = ref(props.review.title);
+const movie_title = ref(props.review.movie_title);
+const rank = ref(props.review.rank);
+const content = ref(props.review.content);
+const poster_path = ref(props.review.poster_path);
 
 // 검색 변수
-const query = ref(review.movie_title);
+const query = ref(props.review.movie_title);
 const movies = ref([]);
 
 // 검색 기능
@@ -128,27 +121,21 @@ const selectMovie = (title, path) => {
   searchMovies();
 };
 
-// 리뷰 생성
+// 리뷰 수정
 const updateReview = function () {
   const data = {
     title: title.value,
     movie_title: movie_title.value,
     content: content.value,
     rank: rank.value,
-    // user 정보는 스토어에 저장된 로그인된 유저의 id 활용
-    user: userStore.userId,
+    user: useUserStore().userId,
     poster_path: poster_path.value,
-    username: userStore.loginUsername,
-    reviewId: review.id
+    username: useUserStore().loginUsername,
+    reviewId: props.review.id
   };
-  console.log(data)
-  store.updateReview(data);
+  useCommunityStore().updateReview(data);
 
-  title.value = "";
-  movie_title.value = "";
-  rank.value = 0;
-  content.value = "";
-  query.value = "";
+  emit('close');
 };
 </script>
 

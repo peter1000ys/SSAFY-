@@ -2,7 +2,8 @@
   <div class="review-create-container">
     <form @submit.prevent="createReview">
       <div class="form-group">
-        <label for="movie_title_search">영화 제목</label>
+        <h5 style="text-align: center;">REVIEW CREATE</h5>
+        <hr style="color: red;">
         <input
           class="form-control"
           v-model="query"
@@ -11,6 +12,9 @@
           id="movie_title_search"
           name="movie_title_search"
         />
+        <br>
+        <hr style="color: red;">
+        <br>
         <ul v-if="movies.length" class="search-results">
           <li
             v-for="movie in movies"
@@ -38,29 +42,31 @@
       </div>
 
       <div class="form-group">
-        <label for="title">리뷰 제목</label>
         <input
           class="form-control"
           type="text"
           id="title"
           name="title"
           v-model="title"
+          placeholder="Review Title"
         />
       </div>
 
       <div class="form-group">
-        <label for="content">리뷰 내용</label>
-        <input
+        <textarea
           class="form-control"
           type="text"
           id="content"
           name="content"
           v-model="content"
-        />
+          placeholder="Review Content"
+        ></textarea>
       </div>
       <div>
-        <label class="form-group" for="rank">나의 점수</label>
+        <br>
+        <label class="form-group" for="rank">Your Rate</label>
         <StarRating v-model="rank" />
+        <br>
       </div>
 
       <button class="mt-3 btn btn-outline-danger main-text" type="submit">
@@ -76,6 +82,11 @@ import { useCommunityStore } from "@/stores/community";
 import { useUserStore } from "@/stores/user";
 import axios from "axios";
 import StarRating from "@/components/StarRating.vue";
+
+// Props
+const props = defineProps({
+  closeModal: Function,
+});
 
 // community 스토어
 const store = useCommunityStore();
@@ -121,7 +132,7 @@ const selectMovie = (title, path) => {
 };
 
 // 리뷰 생성
-const createReview = function () {
+const createReview = async function () {
   const data = {
     title: title.value,
     movie_title: movie_title.value,
@@ -133,17 +144,21 @@ const createReview = function () {
     username: userStore.loginUsername,
   };
 
-  store.createReview(data);
+  await store.createReview(data);
+  
+  // Clear form fields after review submission
   title.value = "";
   movie_title.value = "";
   rank.value = 0;
   content.value = "";
   query.value = "";
+  
+  // Call the close-modal prop to close the modal
+  props.closeModal();
 };
 </script>
 
 <style scoped>
-
 input:focus {
   outline: 2px solid rgb(255, 0, 0);
 }

@@ -96,7 +96,7 @@
       </div>
 
       <div>
-        <nav class="d-flex justify-content-center">
+        <nav class="d-flex justify-content-center fs-larger">
           <RouterLink :to="{ name: 'related' }" @click="getSimilar(store.movie.id)">비슷한 콘텐츠</RouterLink> | 
           <RouterLink :to="{ name: 'review' }" @click="getMovieReview(store.movie.title)" class="pl-3">리뷰 목록</RouterLink>
         </nav>
