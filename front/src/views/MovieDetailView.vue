@@ -197,13 +197,13 @@ onBeforeRouteLeave((to, from, next) => {
   left: 0;
   width: 100%;
   height: 200px;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.85) 20%, rgba(0, 0, 0, 1) 30%);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 1) 90%);
   pointer-events: none; /* Ensure the gradient doesn't interfere with user interaction */
 }
 
 .movie-title {
   position: absolute;
-  top: 450px;
+  top: 550px;
   left: 20px;
   z-index: 10;
   font-size: 3rem;
@@ -216,7 +216,7 @@ onBeforeRouteLeave((to, from, next) => {
 }
 .movie-info {
   position: absolute;
-  top: 600px;
+  top: 700px;
   background-color: rgba(0, 0, 0, 1);
   padding: 20px;
   border-radius: 10px;

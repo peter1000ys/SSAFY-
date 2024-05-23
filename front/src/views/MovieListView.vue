@@ -1,17 +1,6 @@
 <template>
   <div>
     <GenreButtons />
-
-    <div>
-      <div v-if="movies.length">
-        <div class="movie-card-container">
-          <div v-for="movie in paginatedMovies" :key="movie.id" class="movie-card" @click="MovieDetail(movie.tmdb_id)">
-            <GenreMovieCard :movie="movie" />
-          </div>
-        </div>
-      </div>
-    </div>
-    <div v-if="!query">
       <div v-if="!$route.params.genreId">
         <div v-if="store.movies">
           <div class="movie-card-container">
@@ -36,7 +25,6 @@
       </div>
     </div>
     <RouterView />
-  </div>
 </template>
 
 <script setup>
@@ -45,27 +33,13 @@ import GenreMovieCard from '@/components/GenreMovieCard.vue';
 import { useMovieStore } from '@/stores/movie';
 import { onMounted, ref, computed } from 'vue';
 import { RouterView } from 'vue-router';
-import axios from 'axios';
-import { useRouter } from 'vue-router'
 
-const query = ref('');
-const movies = ref([]);
+
 
 const currentStorePage = ref(1);
 const itemsPerStorePage = 15;
 
-const router = useRouter();
 
-const MovieDetail = function(movieId) {
-  console.log(movieId);
-  router.push({ name: 'detail', params: { movieId: movieId } });
-};
-
-const paginatedMovies = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  return movies.value.slice(start, end);
-});
 
 
 const store = useMovieStore();
