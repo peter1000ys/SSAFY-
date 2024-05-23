@@ -33,16 +33,21 @@ def review_list(request):
             return Response(serializer.data)
 
 
-@api_view(["GET","DELETE"])
+@api_view(["GET","DELETE", "PUT",])
 @permission_classes([IsAuthenticated])
 def review_detail(request, review_pk):
     review = Review.objects.get(pk=review_pk)
     if request.method == "GET":
         serializer = ReviewDetailSerializer(review)
         return Response(serializer.data)
-    if request.method == "DELETE":
+    elif request.method == "DELETE":
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == "PUT":
+        serializer = ReviewSerializer(review, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
 
 
 @api_view(["GET", "POST"])
@@ -102,7 +107,7 @@ def review_hate(request, review_pk, user_pk):
         }
         return JsonResponse(hate_status)
 
-# 리뷰 < - 댓글 조회, 작성 기능
+# 리뷰 <- 댓글 조회, 작성 기능
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def review_comment(request, review_pk):
@@ -117,6 +122,17 @@ def review_comment(request, review_pk):
             serializer.save()
             return Response(serializer.data)
 
+# 리뷰 <- 댓글 상세 조회, 삭제 기능
+@api_view(["GET", "DELETE"])
+@permission_classes([IsAuthenticated])
+def review_comment_detail(request, review_pk, comment_pk):
+    comment = Comment.objects.filter(pk=comment_pk)
+    if request.method == "GET":
+        serializer = CommentListSerializer(comment)
+        return Response(serializer.data)
+    if request.method == "DELETE":
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])

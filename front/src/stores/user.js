@@ -27,32 +27,34 @@ export const useUserStore = defineStore("user", () => {
 
     };
 
-    const login = function (data, username) {
-      axios({
-        method: "post",
-        url: "http://127.0.0.1:8000/accounts/login/",
-        data,
+  const login = function (data, username) {
+    return axios({
+      method: "post",
+      url: "http://127.0.0.1:8000/accounts/login/",
+      data,
+    }).then((response) => {
+      loginUsername.value = username.value;
+      token.value = response.data.key;
+      console.log(token.value)
+
+      return axios({
+        method: "get",
+        url: `http://127.0.0.1:8000/api/v1_2/${loginUsername.value}/`,
+        headers: {
+          Authorization: `Token ${token.value}`
+        }
       }).then((response) => {
-        loginUsername.value = username.value
-        token.value = response.data.key
-        console.log(token.value)
-        // console.log(loginUsername.value)
-        
-        axios({
-          method: "get",
-          url: `http://127.0.0.1:8000/api/v1_2/${loginUsername.value}/`,
-          headers: {
-            Authorization: `Token ${token.value}`
-          }
-        })
-        .then((response) => {
-          userId.value = response.data.id
-          const RecStore = useRecommendStore()
-          RecStore.getLikedGenresWithMovies(userId.value)
-          RecStore.userRecommend()
-        })
+        userId.value = response.data.id;
+        const RecStore = useRecommendStore();
+        RecStore.getLikedGenresWithMovies(userId.value);
+        RecStore.userRecommend()
+        return true; // login successful
       })
-    }
+    }).catch((error) => {
+      console.log(error);
+      return false; // login failed
+    })
+  }
 
     const logout = function () {
       axios({
@@ -67,7 +69,9 @@ export const useUserStore = defineStore("user", () => {
         const RecStore = useRecommendStore()
         RecStore.clearLikedGenres()
 
-      });
+      }).catch((error) => {
+        console.log(error)
+      })
     };
 
     // 프로필용 유저 정보 저장

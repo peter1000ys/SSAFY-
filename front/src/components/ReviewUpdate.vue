@@ -1,7 +1,6 @@
 <template>
   <div class="review-create-container">
-    <!-- <h1 class="">ReviewCreate</h1> -->
-    <form @submit.prevent="createReview">
+    <form @submit.prevent="updateReview">
       <div class="form-group">
         <label for="movie_title_search">영화 제목</label>
         <input
@@ -65,7 +64,7 @@
       </div>
 
       <button class="mt-3 btn btn-outline-danger main-text" type="submit">
-        작성하기
+        수정하기
       </button>
     </form>
   </div>
@@ -83,15 +82,23 @@ const store = useCommunityStore();
 // user 스토어
 const userStore = useUserStore();
 
+const props = defineProps({
+  review:Object
+})
+console.log("props", props.review)
+const review = props.review
+console.log("review", review)
+
 // 리뷰 작성 필드 정보
-const title = ref(null);
-const movie_title = ref(null);
-const rank = ref(0);
-const content = ref(null);
-const poster_path = ref(null);
+const title = ref(review.title);
+console.log("title", title.value)
+const movie_title = ref(review.movie_title);
+const rank = ref(review.rank);
+const content = ref(review.content);
+const poster_path = ref(review.poster_path);
 
 // 검색 변수
-const query = ref("");
+const query = ref(review.movie_title);
 const movies = ref([]);
 
 // 검색 기능
@@ -122,7 +129,7 @@ const selectMovie = (title, path) => {
 };
 
 // 리뷰 생성
-const createReview = function () {
+const updateReview = function () {
   const data = {
     title: title.value,
     movie_title: movie_title.value,
@@ -132,9 +139,11 @@ const createReview = function () {
     user: userStore.userId,
     poster_path: poster_path.value,
     username: userStore.loginUsername,
+    reviewId: review.id
   };
-  // console.log(data)
-  store.createReview(data);
+  console.log(data)
+  store.updateReview(data);
+
   title.value = "";
   movie_title.value = "";
   rank.value = 0;
@@ -144,7 +153,6 @@ const createReview = function () {
 </script>
 
 <style scoped>
-
 input:focus {
   outline: 2px solid rgb(255, 0, 0);
 }

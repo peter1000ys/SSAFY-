@@ -2,7 +2,7 @@
   <div class="fs-4">
     <hr class="border border-danger border-2 opacity-50" />
 
-    <p class="fs-3 font text-center">댓글 작성</p>
+    <!-- <p class="fs-5 font text-center">작성하기</p> -->
     <form @submit.prevent="createComment">
       <div class="d-flex align-center justify-content-center">
         <label for="content"> </label>
@@ -14,8 +14,8 @@
           id="content"
           v-model="content"
         />
-        <button class="ms-2 btn btn-outline-danger" type="submit">
-          작성하기
+        <button class="ms-2 btn btn-outline-success" type="submit">
+          댓글 작성
         </button>
       </div>
     </form>
@@ -47,6 +47,9 @@ const createComment = function () {
 </script>
 
 <style scoped>
+input:focus {
+  outline: 2px solid rgb(255, 0, 0);
+}
 .review-create-container {
   background-color: black;
   color: white;

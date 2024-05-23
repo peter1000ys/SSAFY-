@@ -14,6 +14,7 @@ import ReviewList from '@/components/ReviewList.vue'
 import Genre from '@/components/Genre.vue'
 
 import ReviewCreate from '@/components/ReviewCreate.vue'
+import ReviewUpdate from '@/components/ReviewUpdate.vue'
 
 import Comment from '@/components/Comment.vue'
 
@@ -81,8 +82,13 @@ const router = createRouter({
       name: 'reviewDetail',
       component: ReviewDetailView,
       children:[
-        {path:'comment', name:'comment', component:Comment}
+        {path:'comment', name:'comment', component:Comment},
       ]
+    },
+    {
+      path:'/update/:reviewId',
+      name:'reviewUpdate',
+      component:ReviewUpdate,
     },
     {
       path: '/profile',
@@ -97,5 +103,6 @@ const router = createRouter({
     },
   ]
 })
+
 
 export default router

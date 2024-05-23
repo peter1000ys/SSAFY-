@@ -46,6 +46,11 @@ const signup = function () {
     return;
   }
 
+  if (password1.length < 8) {
+    alert("비밀번호가 너무 짧습니다.");
+    return;
+  }
+
   store.signup(data);
   form.value.reset();
   router.push({ name: "login" });

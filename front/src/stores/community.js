@@ -2,11 +2,13 @@ import axios from "axios";
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
 export const useCommunityStore = defineStore("community",() => {
     const reviews = ref([])
     const comments = ref([])
     const store = useUserStore()
+    const router = useRouter()
     
     const reviewLiked = ref(false)
     const reviewHated = ref(false)
@@ -50,6 +52,34 @@ export const useCommunityStore = defineStore("community",() => {
         console.log(response)
         console.log("리뷰 작성 완료")
         getReviews()
+      })
+        .catch((error) => {
+          console.log(error)
+        })
+    };
+
+    const updateReview = function (data) {
+      const { title, movie_title, content, rank, user, poster_path, username, reviewId } = data
+      axios({
+        method: "put",
+        url: `http://127.0.0.1:8000/api/v1_1/${reviewId}/`,
+        data: {
+          title,
+          movie_title,
+          rank,
+          content,
+          user,
+          poster_path,
+          username
+        },
+        headers: {
+          Authorization: `Token ${store.token}`
+        }
+      }).then((response) => {
+        console.log(response)
+        console.log("리뷰 수정 완료")
+        // router.push({name:'reviewDetail', params:{reviewId:reviewId}})
+        router.push({name:'community'})
       })
         .catch((error) => {
           console.log(error)
@@ -154,6 +184,7 @@ export const useCommunityStore = defineStore("community",() => {
       comments,
       getReviews,
       createReview,
+      updateReview,
       getComments,
       createComment,
       reviewLiked,
