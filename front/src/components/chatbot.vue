@@ -49,7 +49,7 @@ const showInitialMessage = ref(false)
 
 // API URL 및 키
 const OPEN_API_URL = 'https://api.openai.com/v1/chat/completions'
-const API_KEY = '***REMOVED***'
+const API_KEY = '**REMOVED**'
 
 // 필요한 헤더 정보
 const headers = {
